@@ -1,0 +1,85 @@
+#____________LAUNCH_____________
+
+outdir              = "Data"
+
+#___________PROFILE_____________
+
+profile_name 		= "profiles/sedov.short"
+
+comp_profile_name	= "profiles/sedov.iso.dat"
+
+#__________EXPLOSION_____________
+
+initial_data 		= "Thermal_Bomb"
+
+#Options:
+#"Piston_Explosion"
+#"Thermal_Bomb"
+
+piston_vel          = 2.0d9
+piston_tstart       = 0.0d0
+piston_tend         = 1.0d-2
+
+final_energy        = 1.0d0
+bomb_tstart         = 0.0d0
+bomb_tend           = 1.0d-4
+bomb_mass_spread    = 1.0d-36  #(in solar mass)
+bomb_start_point    = 1
+
+#_____________GRID_______________
+
+imax         = 1000
+
+gridding = "uniform_by_mass"
+
+#Options:
+#"uniform_by_mass"
+#"from_file_by_mass"
+
+mass_excision = 0
+mass_excised = 1.5 #in solar mass, provided mass_excision = 1
+
+#___________EVOLUTION_____________
+
+radiation = 0
+eoskey = 1
+	
+#Options:
+#1 - ideal eos
+#2 - Paczynski
+
+Ni_switch = 0
+Ni_mass = 0.0d0 			#(in solar mass)
+Ni_boundary_mass = 0.0d0    #(in solar mass, should be larger than excised mass)
+			    #(attention - smoothing is going to change it, if applied)
+Ni_period = 1.0d4
+
+saha_ncomps = 0
+
+boxcar_smoothing = 0
+
+opacity_floor_envelope = 0.01d0
+opacity_floor_core     = 0.24d0
+
+#___________TIMING_______________
+
+ntmax               = 10000000000000
+
+tend                = 4.0d0
+
+dtout               = 1.0d-2
+dtout_scalar        = 1.0d-2
+dtout_check         = 1.0d-2
+
+ntout               = -1
+ntout_scalar        = -1
+ntout_check         = -1
+
+ntinfo              = 1000
+
+dtmin               = 1.0d-10
+dtmax               = 1.0d2
+
+#____________TEST_________________
+
+sedov 		    = 1

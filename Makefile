@@ -1,0 +1,7 @@
+# some definitions controlling compilation
+
+all: 
+	$(MAKE) -C src
+
+clean: 
+	$(MAKE) -C src clean

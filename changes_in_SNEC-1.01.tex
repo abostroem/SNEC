@@ -1,0 +1,63 @@
+\documentclass[11pt,letter]{article}
+
+
+\begin{document}
+
+\begin{center}
+\large \bf SNEC: The SuperNova Explosion Code
+\normalsize \rm
+
+Version 1.01 -- Changelog
+
+
+\end{center}
+
+
+Changes between \texttt{SNEC-1.01} and \texttt{SNEC-1.00} are related
+to the performance of the code only, while all the physics is the
+same. \texttt{SNEC-1.01} is about a factor $\sim 2$ faster than
+\texttt{SNEC-1.00}.
+
+The technical improvements making the code faster include:
+
+\begin{itemize}
+\item Constructing opacity tables for each grid point from the OPAL
+tables once at the beginning of the simulation, instead of calling the
+OPAL routine at each time step. This is justified by the fact that
+in the current version of \texttt{SNEC} the composition of the profile
+does not change with time;
+
+\item Optimization of matrix element calculation in
+  \texttt{arrays.F90}. Thanks go to Brian W. Mulligan (University of
+  Texas, Austin);
+
+\item Optimization of \texttt{nickel.F90} and \texttt{simple\_saha.F90} routines.
+\end{itemize}
+
+Other small changes and fixes include:
+
+\begin{itemize}
+\item Fix in the mean lifetime and yield of $^{56}{\rm Co}$, the
+  current values are taken from Nadyozhin, ApJS 92, 527 (1994);
+
+\item Error message in the case when the number of grid points is not equal
+ to the number of lines in \texttt{GridPattern.dat} (note that some machines
+require a blank line at the end of the file to count the number of lines correctly);
+
+\item Adding (optional) parameters \texttt{bomb\_mode} and \texttt{Ni\_by\_hand}. 
+
+In the case when \texttt{bomb\_mode=1} (default), the parameter \texttt{final\_energy} 
+corresponds to the asymptotic energy of the system, as in \texttt{SNEC-1.00}.
+In the case when \texttt{bomb\_mode=2}, the parameter 
+\texttt{final\_energy} corresponds to the thermal bomb energy.
+
+In the case when \texttt{Ni\_by\_hand=1} (default), the mass fraction of $^{56}{\rm Ni}$ is
+calculated from the parameters \texttt{Ni\_mass} and \texttt{Ni\_boundary\_mass} as
+in \texttt{SNEC-1.00}. In the case when \texttt{Ni\_by\_hand=0}, the mass fraction of 
+$^{56}{\rm Ni}$ is taken from the composition profile.
+
+\end{itemize}
+
+\thispagestyle{empty}
+
+\end{document}

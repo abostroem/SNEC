@@ -1,0 +1,85 @@
+#____________LAUNCH_____________
+
+outdir              = "Data"
+
+#___________PROFILE_____________
+
+profile_name 		= "profiles/15Msol_RSG.short"
+
+comp_profile_name	= "profiles/15Msol_RSG.iso.dat"
+
+#__________EXPLOSION_____________
+
+initial_data 		= "Thermal_Bomb"
+
+#Options:
+#"Piston_Explosion"
+#"Thermal_Bomb"
+
+piston_vel          = 5.0d9
+piston_tstart       = 0.0d0
+piston_tend         = 1.0d-2
+
+final_energy        = 1.0d51
+bomb_tstart         = 0.0d0
+bomb_tend           = 0.1d0
+bomb_mass_spread    = 0.1d0 #(in solar mass)
+bomb_start_point    = 1
+
+#_____________GRID_______________
+
+imax         = 1000
+
+gridding = "from_file_by_mass"
+
+#Options:
+#"uniform_by_mass"
+#"from_file_by_mass"
+
+mass_excision = 1
+mass_excised = 1.4 #in solar mass, provided mass_excision = 1
+
+#___________EVOLUTION_____________
+
+radiation = 1
+eoskey = 2
+
+#Options:
+#1 - ideal eos
+#2 - Paczynski
+
+Ni_switch = 1
+Ni_mass = 0.05 			#(in solar mass)
+Ni_boundary_mass = 3.0d0    #(in solar mass, should be larger than excised mass)
+			    #(attention - smoothing is going to change it, if applied)
+Ni_period = 1.0d4
+
+saha_ncomps = 3
+
+boxcar_smoothing = 1
+
+opacity_floor_envelope = 0.01d0
+opacity_floor_core     = 0.24d0
+
+#___________TIMING_______________
+
+ntmax               = 10000000000000
+
+tend                = 17000000.0d0
+
+dtout               = 1.7d4
+dtout_scalar        = 1.7d3
+dtout_check         = 1.7d3
+
+ntout               = -1
+ntout_scalar        = -1
+ntout_check         = -1
+
+ntinfo              = 1000
+
+dtmin               = 1.0d-10
+dtmax               = 1.0d2
+
+#____________TEST_________________
+
+sedov 		    = 0
