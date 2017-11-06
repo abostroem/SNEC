@@ -130,7 +130,7 @@ subroutine analysis
   do i=1, 11
      call map_map(bol_corr_used(i),T_eff_for_BC,bol_corr(1:nlines_bol_corr,i), &
           temp_bol_corr,nlines_bol_corr)
-     magnitudes(i) = sun_mag - bol_corr_used(i) - 2.5d0*log10(lum_photo/sun_lum)
+     magnitudes(i) = sun_mag - bol_corr_used(i) - 2.5d0*log10(lum_observed/sun_lum)
   end do
 
   !write down the magnitudes in a file
