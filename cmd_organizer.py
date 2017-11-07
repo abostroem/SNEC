@@ -14,7 +14,7 @@ PARFILE = Template("""\
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
 #SBATCH --mail-user=kabostroem@ucdavis.edu
-#SBATCH --job-name=${SN}_${Nimixing}_${Mvalue}
+#SBATCH --job-name=${SN}_${Nimixing}_${Mvalue}_${num}
 
 BASEPATH=/home/bostroem/SNEC/${SN}/mixing_${Nimixing}/M${Mvalue}
 RUNS=${energies}
@@ -34,4 +34,5 @@ for ifilenum in range(nout):
              Nimixing      = str(MixNi),
              Mvalue        = str(MM),
              energies      = str(Evalues[ifilenum*nout:(ifilenum+1)*nout]))
+             num           = str(ifilenum+1)
         )
