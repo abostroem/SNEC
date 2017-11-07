@@ -4,7 +4,7 @@ import os
 from sys import argv
 from string import Template
 
-script,SNname,MixNi,MM,Evalues = argv
+script,SNname,MixNi,MM,Evalues,nout = argv
 
 PARFILE = Template("""\
 #! /bin/bash
@@ -26,11 +26,12 @@ done
 
 wait
 """)
-
-open("/home/bostroem/SNEC/snec.cmd", "w").write(
-    PARFILE.substitute(
-         SN            = str(SNname),
-         Nimixing      = str(MixNi),
-         Mvalue        = str(MM),
-         energies      = str(Evalues))
-    )
+for ifilenum in range(nout):
+    
+    open("/home/bostroem/SNEC/snec{}.cmd".format(ifilenum+1), "w").write(
+        PARFILE.substitute(
+             SN            = str(SNname),
+             Nimixing      = str(MixNi),
+             Mvalue        = str(MM),
+             energies      = str(Evalues[ifilenum*nout:(ifilenum+1)*nout]))
+        )
