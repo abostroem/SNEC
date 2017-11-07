@@ -13,10 +13,10 @@ PARFILE = Template("""\
 #SBATCH -t 12:00:00
 #SBATCH --mail-type=begin
 #SBATCH --mail-type=end
-#SBATCH --mail-user=vsg@princeton.edu
+#SBATCH --mail-user=kabostroem@ucdavis.edu
 #SBATCH --job-name=${SN}_${Nimixing}_${Mvalue}
 
-BASEPATH=/scratch/gpfs/vsg/${SN}/mixing_${Nimixing}/M${Mvalue}
+BASEPATH=/home/bostroem/SNEC/${SN}/mixing_${Nimixing}/M${Mvalue}
 RUNS=${energies}
 
 for r in $${RUNS[@]}; do
@@ -27,7 +27,7 @@ done
 wait
 """)
 
-open("/scratch/gpfs/vsg/snec.cmd", "w").write(
+open("/home/bostroem/SNEC/snec.cmd", "w").write(
     PARFILE.substitute(
          SN            = str(SNname),
          Nimixing      = str(MixNi),
