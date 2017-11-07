@@ -3,36 +3,36 @@
 import os
 from sys import argv
 from string import Template
+import stat
 
-script,SNname,MixNi,MM,Evalues,nout = argv
+BASEPATH = '/Users/bostroem/Desktop/research/not_my_code/SNEC-1.01'
 
-PARFILE = Template("""\
-#! /bin/bash
-#SBATCH -N 1   # node count
-#SBATCH --ntasks-per-node=16  # core count
-#SBATCH -t 12:00:00
-#SBATCH --mail-type=begin
-#SBATCH --mail-type=end
-#SBATCH --mail-user=kabostroem@ucdavis.edu
-#SBATCH --job-name=${SN}_${Nimixing}_${Mvalue}_${num}
+script,SNname,MixNi,MM,Evalues = argv
+ofile = open('snec_master.cmd', 'w')
+ofile.write(' \
+#! /bin/bash -l \n \
+#SBATCH -N 1   # node count \n \
+#SBATCH -t 12:00:00 \n \
+#SBATCH --mail-type=begin \n \
+#SBATCH --mail-type=end \n \
+#SBATCH --mail-user=kabostroem@ucdavis.edu \n \
+#SBATCH --job-name=${SN}_${Nimixing}_${Mvalue} \n \
+srun ./snec${SLURM_ARRAY_TASK_ID}.sh \n')
+ofile.close()
+os.chmod('snec_master.cmd', stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
 
-BASEPATH=/home/bostroem/SNEC/${SN}/mixing_${Nimixing}/M${Mvalue}
-RUNS=${energies}
 
-for r in $${RUNS[@]}; do
-    cd $$BASEPATH/E_$$r
-    time ./snec &> snec.out &
-done
 
-wait
-""")
-for ifilenum in range(nout):
-    
-    open("/home/bostroem/SNEC/snec{}.cmd".format(ifilenum+1), "w").write(
-        PARFILE.substitute(
-             SN            = str(SNname),
-             Nimixing      = str(MixNi),
-             Mvalue        = str(MM),
-             energies      = str(Evalues[ifilenum*nout:(ifilenum+1)*nout]))
-             num           = str(ifilenum+1)
-        )
+energies = Evalues.strip('(').strip(')').strip("'").split(' ')
+for indx, ienergy in enumerate(energies):
+    ofile = open('snec{}.sh'.format(indx+1), 'w')
+    energy_dir =  'E_{}r'.format(ienergy)
+    mixing_dir = 'mixing_{}'.format(MixNi)
+    mass_dir = 'M{}'.format(MM)
+    ofile.write('cd {} \n'.format(os.path.join(BASEPATH, SNname, mixing_dir, mass_dir, energy_dir)))
+    ofile.write('./snec &>snec.out & \n')
+    ofile.close()
+    os.chmod('snec{}.sh'.format(indx+1), stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
+
+
+
