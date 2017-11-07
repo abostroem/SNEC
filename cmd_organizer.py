@@ -17,7 +17,7 @@ ofile.write(' \
 #SBATCH --mail-type=end \n \
 #SBATCH --mail-user=kabostroem@ucdavis.edu \n \
 #SBATCH --job-name=${SN}_${Nimixing}_${Mvalue} \n \
-srun ./snec${SLURM_ARRAY_TASK_ID}.sh \n')
+srun ./snec${SLURM_ARRAY_TASK_ID}.sh \n'.format(SNname, MixNi, MM))
 ofile.close()
 os.chmod('snec_master.cmd', stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
 
