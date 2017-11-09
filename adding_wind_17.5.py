@@ -3,7 +3,7 @@ from sys import argv
 import subprocess
 
 #import numpy as np
-from pylab import *
+#from pylab import *
 from matplotlib import rcParams
 from scipy import interpolate
 
