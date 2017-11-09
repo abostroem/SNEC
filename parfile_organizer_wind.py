@@ -8,6 +8,7 @@ script,basename,EE,mixing,Ni_mass = argv
 
 M_ZAMS = ["9.0","9.5","10.0","10.5","11.0","11.5","12.0","12.5","13.0","13.5","14.0","14.5","15.0","15.5","16.0","16.5","17.0","17.5","18.0","18.5","19.0","19.5","20.0","20.5","21.0","21.5","22.0","22.5","23.0","23.5","24.0","24.5","25.0"]
 
+#neutron star exisision mass - uses M_ZAMS to index into it
 M_ex = [1.4,1.4,1.423,1.483,1.404,1.551,1.478,1.568,1.614,1.615,1.652,1.688,1.886,1.916,1.504,1.518,1.530,1.911,1.905,1.810,1.646,1.773,1.804,1.536,1.480,1.569,1.817,2.061,2.121,2.134,2.093,2.019,1.930]
 
 #M_ex = [1.4,1.4,1.423,1.483,1.404,1.551,1.478,1.568,1.614,1.615,1.652,1.688,1.886,1.916,1.504,1.518,1.530,1.911,1.905,1.810,1.646,1.773,1.804,1.536,1.480,1.569,2.3,2.4,2.4,2.4,2.4,2.4,2.4]
@@ -63,7 +64,7 @@ eoskey = $eos
 #1 - ideal eos
 #2 - Paczynski
 
-helm_table_name = "src/helmholtz_eos/helm_table.dat"
+#helm_table_name = "src/helmholtz_eos/helm_table.dat"
 
 Ni_switch = $Ni_switch_par
 Ni_mass = $Ni_total_mass 			#(in solar mass)
@@ -102,9 +103,19 @@ dtmax               = 3.0d2
 sedov 		    = 0
 """)
 
+#ntmax = max number of steps
+#tend = end time
+#nout-- not used
+#ntout - frequency of output being recorded in the xg files
+#ntout_scaler - frequency of output being recorded in dat files
+#ntout_check - not used
+#ntinfo = how often output to screen
+#dtmin, dtmax - min and max timestep - the code determines this as it needs, so shouldn't matter much
+
+
 shortfile = [f for f in os.listdir(basename + "/profiles") if (f.startswith("s") and f.endswith(".short"))][0]
 isofile = [f for f in os.listdir(basename + "/profiles") if (f.startswith("s") and f.endswith(".iso.dat"))][0]
-M_ZAMS_string = shortfile.partition('s')[-1].rpartition('_')[0]
+best_M_ZAMS = float(shortfile.partition('s')[-1].rpartition('_')[0])
 open(basename + "/parameters", "w").write(
     PARFILE.substitute(
         profile_short      = "\""+"profiles/"+shortfile+"\"",
@@ -113,11 +124,11 @@ open(basename + "/parameters", "w").write(
         bomb_time       = '1.0d0',
         bomb_mass_size      = '0.02d0',
         resolution      = '1000',
-        excised_mass  = str(M_ex[M_ZAMS.index(M_ZAMS_string)]),
+        excised_mass  = str(M_ex[M_ZAMS==best_M_ZAMS]),
         Ni_switch_par = '1',
         Ni_total_mass = str(Ni_mass),
         Ni_mixing  = str(mixing),
         boxcar = '1',
         eos = '2',
-        endtime = '1.728d7')
+        endtime = '2.592d7')
         )
