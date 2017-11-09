@@ -7,6 +7,8 @@ from pylab import *
 from matplotlib import rcParams
 from scipy import interpolate
 
+
+#Run as many times as you want with different KK values
 script,KK = argv
 
 msol = 1.98e33
@@ -16,19 +18,19 @@ velocity_of_wind = 1.0e6
 
 ### --------------------- Parameters --------------------
 
-delta_r = 0.2
+delta_r = 1 #Radius step in solar radii
 
 R_extent = ['700','800','900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000','2100','2200']
 #R_extent = ['2300','2400','2500','2600','2700','2800','2900','3000','3100','3200','3300','3400','3500','3600','3700','3800']
 
 for k in range(len(R_extent)):
 
-    mainfolder = 'profiles_wind_17.5/K'+KK+'_R'+R_extent[k]
+    mainfolder = os.path.join('profiles_wind_17','K{}_R{}'.format(KK,R_extent[k])) #Change
 
-    os.mkdir(mainfolder)
+    os.makedirs(mainfolder, exist_ok=True)
 
-    M_ZAMS = [17.5]
-    string = ["17.5"]
+    M_ZAMS = [17] #Change
+    string = ["17"] #Change
 
     rho_attach_gl = []
     vel_esc_gl = []
@@ -37,13 +39,13 @@ for k in range(len(R_extent)):
     tau_wind_gl = []
 
 
-    for i in range(len(M_ZAMS)):
+    for i, imass in enumerate(M_ZAMS):
 
-        fname = "../sukhbold_profiles/s"+str(M_ZAMS[i])+"/profiles/s"+string[i]+".short"
-        fname_iso = "../sukhbold_profiles/s"+str(M_ZAMS[i])+"/profiles/s"+string[i]+".iso.dat"
+        fname = "sukhbold_profiles/s{0}/profiles/s{0:2.1f}.short".format(imass) #change
+        fname_iso = "sukhbold_profiles/s{0}/profiles/s{0:2.1f}.iso.dat".format(imass) #change
 
-        os.mkdir(mainfolder+'/s'+str(M_ZAMS[i]))
-        os.mkdir(mainfolder+'/s'+str(M_ZAMS[i])+'/profiles')
+        os.makedirs(os.path.join(mainfolder,'s{}'.format(imass)), exist_ok=True)
+        os.makedirs(os.path.join(mainfolder,'s{}'.format(imass),'profiles'), exist_ok=True)
 
         ### --------------------- Read the profile of the core --------------------
 
@@ -63,7 +65,7 @@ for k in range(len(R_extent)):
                 rho.append(float(s[4]))
                 rho_log.append(log10(float(s[4])))
                 vel.append(float(s[5]))
-
+        #Attach to profile when densities are the same
         rho_wind_attach = float(KK)/((radius[-1]*rsol)**2)
 
         vel_esc = sqrt(2*ggrav*mass[-1]*msol/(radius[-1]*rsol))
@@ -105,7 +107,7 @@ for k in range(len(R_extent)):
         mass_in_wind_gl.append(mass_in_wind)
 
         ### ------------ calculating the optical depth of the wind --------------
-
+        #This is informational - SNEC will recalculate more carefully
         kappa = 1.0e-4
         tau_wind = 0
         for l in range(len(radius_wind)-1):
@@ -142,7 +144,7 @@ for k in range(len(R_extent)):
         # note, that here we convert mass and radius in cgs units, used by the code.
         # in the script they are in the solar masses and radii for convenience of plotting
             
-        outfile = open(mainfolder+'/s'+str(M_ZAMS[i])+'/profiles'+'/s'+string[i]+'_'+str(R_extent[k])+'.short',"w")
+        outfile = open(os.path.join(mainfolder,'s{}'.format(M_ZAMS[i]),'profiles','s{}_{}.short'.format(string[i],R_extent[k])),"w")
 
         outfile.write(str(len(radius_wind)) + '\n')
 
