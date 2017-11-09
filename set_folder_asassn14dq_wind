@@ -1,0 +1,31 @@
+KK=$1
+
+SNname=asassn14dq #change this
+M_Ni=0.0461 #Change this
+Mass=18.5 #From best fit in first step
+Energy=0.86 #From first step
+Mixing=5.0
+
+name=${SNname}_wind/K${KK}
+
+mkdir -p $name
+
+#radii=('700' '800' '900' '1000' '1100' '1200' '1300' '1400' '1500' '1600' '1700' '1800' '1900' '2000' '2100' '2200')
+#radii_str="('700' '800' '900' '1000' '1100' '1200' '1300' '1400' '1500' '1600' '1700' '1800' '1900' '2000' '2100' '2200')"
+
+radii=('2300' '2400' '2500' '2600' '2700' '2800' '2900' '3000' '3100' '3200' '3300' '3400' '3500' '3600' '3700' '3800')
+radii_str="('2300' '2400' '2500' '2600' '2700' '2800' '2900' '3000' '3100' '3200' '3300' '3400' '3500' '3600' '3700' '3800')"
+
+for i in ${radii[@]}; do mkdir -p $name/R_$i; done
+
+for i in ${radii[@]}; do cp -R profiles_wind_$Mass/K${KK}_R${i}/s$Mass/profiles $name/R_$i/; done
+
+for i in ${radii[@]}; do cp -R tables $name/R_$i/; done
+
+for i in ${radii[@]}; do cp executable_reduced_output/snec $name/R_$i/; done
+
+for i in ${radii[@]}; do mkdir -p $name/R_$i/Data; done
+
+for i in ${radii[@]}; do python parfile_organizer_wind.py $name/R_$i $Energy $Mixing $M_Ni; done
+
+python cmd_organizer_wind.py $SNname ${KK} "${radii_str}"
