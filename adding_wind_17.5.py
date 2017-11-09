@@ -1,15 +1,10 @@
-import os, sys
-from sys import argv
-import subprocess
-
-#import numpy as np
-#from pylab import *
-from matplotlib import rcParams
-from scipy import interpolate
+import sys
+import os
+import math
 
 
 #Run as many times as you want with different KK values
-script,KK = argv
+script,KK = sys.argv
 
 msol = 1.98e33
 rsol = 6.96e10
@@ -63,12 +58,12 @@ for k in range(len(R_extent)):
                 radius.append(float(s[2])/rsol)
                 temp.append(float(s[3]))
                 rho.append(float(s[4]))
-                rho_log.append(log10(float(s[4])))
+                rho_log.append(math.log10(float(s[4])))
                 vel.append(float(s[5]))
         #Attach to profile when densities are the same
         rho_wind_attach = float(KK)/((radius[-1]*rsol)**2)
 
-        vel_esc = sqrt(2*ggrav*mass[-1]*msol/(radius[-1]*rsol))
+        vel_esc = math.sqrt(2*ggrav*mass[-1]*msol/(radius[-1]*rsol))
         mdot_msol_yr_max = rho_wind_attach*4*math.pi*(radius[-1]*rsol)**2*velocity_of_wind*365*24*3600/msol
 
         rho_attach_gl.append(rho_wind_attach)
@@ -97,7 +92,7 @@ for k in range(len(R_extent)):
                     break
                 radius_wind.append(radius_wind[l-1]+delta_r)
                 rho_wind.append(rho_wind_attach*(radius[-1]/radius_wind[l])**2)
-                rho_log_wind.append(log10(rho_wind[l]))
+                rho_log_wind.append(math.log10(rho_wind[l]))
                 mass_wind.append(mass_wind[l-1]+4.0*math.pi/3.0*(radius_wind[l]**3 -
                             radius_wind[l-1]**3)*rho_wind[l]*rsol**3/msol)
                 temp_wind.append(temp[-1])
