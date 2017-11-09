@@ -1,3 +1,7 @@
+https://stellarcollapse.org/SNEC
+
+SNEC by Morozova, Ott, Piro is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+
 # Install
 * In make.inc comment/uncomment line for specific machine
 * Run make clean
