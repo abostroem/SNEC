@@ -7,8 +7,8 @@ import stat
 
 script,SNname,KK,Rvalues = argv
 
-#BASEPATH = '/home/bostroem/SNEC/'
-BASEPATH = '/Users/bostroem/Desktop/research/not_my_code/SNEC-1.01'
+BASEPATH = '/home/bostroem/SNEC/'
+#BASEPATH = '/Users/bostroem/Desktop/research/not_my_code/SNEC-1.01'
 ofile = open('snec_master_wind.cmd', 'w')
 ofile.write('\
 #!/bin/bash -l \n\
