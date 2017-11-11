@@ -1,4 +1,5 @@
 KK=$1
+start_indx=$2
 
 SNname=asassn15oz #change this
 M_Ni=0.0725 #Change this
@@ -28,4 +29,4 @@ for i in ${radii[@]}; do mkdir -p $name/R_$i/Data; done
 
 for i in ${radii[@]}; do python parfile_organizer_wind.py $name/R_$i $Energy $Mixing $M_Ni; done
 
-python cmd_organizer_wind.py $SNname ${KK} "${radii_str}"
+python cmd_organizer_wind.py $SNname ${KK} "${radii_str}" ${start_indx}
