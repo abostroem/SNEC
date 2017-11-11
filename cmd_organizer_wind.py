@@ -5,7 +5,14 @@ from sys import argv
 from string import Template
 import stat
 
-script,SNname,KK,Rvalues = argv
+if len(argv) == 4:
+    script,SNname,KK,Rvalues = argv
+    start_indx = 0
+elif len(argv) == 5:
+    script,SNname,KK,Rvalues,start_indx = argv
+else:
+    print('Incorrect number of arguments, expecting SNname, KK, Rvalues, and possibly a starting index')
+    sys.exit()
 
 BASEPATH = '/home/bostroem/SNEC/'
 #BASEPATH = '/Users/bostroem/Desktop/research/not_my_code/SNEC-1.01'
@@ -25,7 +32,7 @@ os.chmod('snec_master_wind.cmd', stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | st
 r_values = Rvalues.strip('(').strip(')').split(' ')
 
 for indx, iradius in enumerate(r_values):
-    ofile = open('snec_wind{}.sh'.format(indx+1), 'w')
+    ofile = open('snec_wind{}.sh'.format(indx+1+start_indx), 'w')
     radius_dir =  'R_{}'.format(iradius.strip("'"))
     k_dir = 'K{}'.format(KK)
     ofile.write("#!/bin/bash -l \n")
