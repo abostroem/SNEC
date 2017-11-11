@@ -10,6 +10,7 @@ if len(argv) == 4:
     start_indx = 0
 elif len(argv) == 5:
     script,SNname,KK,Rvalues,start_indx = argv
+    start_indx = float(start_indx)
 else:
     print('Incorrect number of arguments, expecting SNname, KK, Rvalues, and possibly a starting index')
     sys.exit()
