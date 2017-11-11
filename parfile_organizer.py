@@ -119,5 +119,5 @@ open(basename + "/parameters", "w").write(
         Ni_mixing  = str(mixing),
         boxcar = '1',
         eos = '2',
-        endtime = '1.728d7')
+        endtime = '2.592d7')
         )
