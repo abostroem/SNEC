@@ -25,7 +25,7 @@ resolution : 1000  #TODO figure out what this is
 Ni_switch_par : 1 #TODO figure out what this is
 boxcar : 1 #TODO check def - use boxcar smoothing of the profile
 eos : 2  #pick and equation of state; 2 corresponds to Paczynski
-endtime : !!float 2.592d7 #Define an end time for the simulation (in seconds after explosion)
+endtime : !!float 2.592e7 #Define an end time for the simulation (in seconds after explosion)
 
 excised_mass: 
     9.0:  1.4,
