@@ -95,7 +95,8 @@ dtmax               = 3.0d2
 
 #____________TEST_________________
 
-sedov 		    = 0""")
+sedov 		    = 0
+""")
     profile_flist = glob.glob(os.path.join(basepath, 'profiles', 's*'))
     for ifile in profile_flist:
         if ifile.endswith('short'): 
