@@ -4,11 +4,11 @@
 #--------------------------
 #Often changed
 #--------------------------
-mass: [9, 12, 12.25, 17] #previously referred to as M
-explosion_energy: [0.7, 1, 1.1] #previously referred to as E, in units of 10^51 ergs
-density_1D: [1, 10, 20] #previously referred to at K in units of 10^17
-wind_extent: [1000, 2000, 2200] #previously referred to at R, in units of solar radii
-ni_mass: [1.73] #nickel mass in units of solar mass?; ni_mass
+mass: [9, 17] #previously referred to as M
+explosion_energy: [0.7, 1.1] #previously referred to as E, in units of 10^51 ergs
+density_1D: [10, 20] #previously referred to at K in units of 10^17
+wind_extent: [2000, 2200] #previously referred to at R, in units of solar radii
+ni_mass: [0.0725] #nickel mass in units of solar mass?; ni_mass
 ni_mix: [5.0] #outer mass radius of the nickel distribution; ni_boundary_mass
 #List of parameters that are in the format [start, stop, step] and should be expanded by
 #np.arange(start, stop, step)
