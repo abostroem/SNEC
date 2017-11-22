@@ -1,0 +1,115 @@
+
+#This file contains parameters that the user may want to change
+
+#--------------------------
+#Often changed
+#--------------------------
+mass: [9, 12, 12.25, 17] #previously referred to as M
+explosion_energy: [0.7, 1, 1.1] #previously referred to as E, in units of 10^51 ergs
+density_1D: [1, 10, 20] #previously referred to at K in units of 10^17
+wind_extent: [1000, 2000, 2200] #previously referred to at R, in units of solar radii
+ni_mass: [1.73] #nickel mass in units of solar mass?; ni_mass
+ni_mix: [5.0] #outer mass radius of the nickel distribution; ni_boundary_mass
+#List of parameters that are in the format [start, stop, step] and should be expanded by
+#np.arange(start, stop, step)
+expand_params: [] #['mass', 'explosion_energy', 'density_1D', 'wind_extent']
+
+#--------------------------
+#Infrequently changed
+#--------------------------
+delta_r : 1 #Radius step in solar radii
+wind_velocity: !!float 1.0e6
+bomb_time : 1.0 #duration of thermal bomb in seconds
+bomb_mass_size : 0.02 #size of region where bomb energy is injected in solar masses
+resolution : 1000  #TODO figure out what this is
+Ni_switch_par : 1 #TODO figure out what this is
+boxcar : 1 #TODO check def - use boxcar smoothing of the profile
+eos : 2  #pick and equation of state; 2 corresponds to Paczynski
+endtime : !!float 1.728e7 #Define an end time for the simulation (in seconds after explosion)
+
+excised_mass: 
+    9.0:  1.4,
+    9.5:  1.4,
+    10.0: 1.423
+    10.5: 1.483
+    11.0: 1.404
+    11.5: 1.551
+    12.0: 1.478
+    12.5: 1.568
+    13.0: 1.614
+    13.5: 1.615
+    14.0: 1.652
+    14.5: 1.688
+    15.0: 1.886
+    15.5: 1.916
+    16.0: 1.504
+    16.5: 1.518
+    17.0: 1.530
+    17.5: 1.911
+    18.0: 1.905
+    18.5: 1.810
+    19.0: 1.646
+    19.5: 1.773
+    20.0: 1.804
+    20.5: 1.536
+    21.0: 1.480
+    21.5: 1.569
+    22.0: 1.817
+    22.5: 2.061
+    23.0: 2.121
+    23.5: 2.134
+    24.0: 2.093
+    24.5: 2.019
+    25.0: 1.930
+    25.5: 1.930
+    26.0: 1.930
+    26.5: 1.930
+    27.0: 1.930
+    27.5: 1.930
+    28.0: 1.930
+    28.5: 1.930
+    29.0: 1.930
+    29.5: 1.930
+    30.0: 1.930
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
