@@ -87,7 +87,7 @@ def write_sbatch_job(timeout):
 #SBATCH --mail-type=begin 
 #SBATCH --mail-type=end 
 #SBATCH --mail-user=kabostroem@ucdavis.edu 
-#SBATCH --job-name=M={}-{},E={}-{},K={}-{}, R={}-{}
+#SBATCH --job-name='M={}-{},E={}-{},K={}-{}, R={}-{}'
 srun ./snec${}SLURM_ARRAY_TASK_ID{}.sh 
    '''.format(timeout, parameters['mass'][0], parameters['mass'][-1],
                                             parameters['explosion_energy'][0], parameters['explosion_energy'][-1],
@@ -100,7 +100,7 @@ srun ./snec${}SLURM_ARRAY_TASK_ID{}.sh
     
     
 if __name__ == "__main__":      
-
+    #If running on peloton, need to add the line 'module load bio3' to bash_profile
     parser = argparse.ArgumentParser()
     parser.add_argument('timeout', type=int, nargs=1,
                         help='the maximum time for a job to run, this should be twice what you expect it to take')
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                             write_sbatch_executable(basepath, array_num, snec_dir)
     write_sbatch_job(args.timeout)
     print('Ready to run, start your jobs with the command:')
-    print('sbatch --partition high --array=1-{}'.format(array_num))
+    print('sbatch --partition high --array=1-{} ./snec_master.sh'.format(array_num))
                     
                         
 
