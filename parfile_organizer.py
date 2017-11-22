@@ -124,6 +124,6 @@ sedov 		    = 0""")
                 Ni_mixing  = '{}'.format(i_ni_mix),
                 boxcar = str(parameters['boxcar']),
                 eos = str(parameters['eos']),
-                endtime = '{:1.3E}'.format(parameters['endtime']).replace('E+', 'd')
+                endtime = '{:1.3E}'.format(parameters['endtime']).replace('E+0', 'd')
             )
         )
