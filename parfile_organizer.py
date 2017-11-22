@@ -59,7 +59,7 @@ eoskey = $eos
 #1 - ideal eos
 #2 - Paczynski
 
-helm_table_name = "src/helmholtz_eos/helm_table.dat"
+#helm_table_name = "src/helmholtz_eos/helm_table.dat"
 
 Ni_switch = $Ni_switch_par
 Ni_mass = $Ni_total_mass 			#(in solar mass)
