@@ -65,6 +65,7 @@ def copy_files(basepath, imass, idensity, iradius):
         shutil.copyfile(ifile, os.path.join(basepath, 'profiles', os.path.basename(ifile)))
     shutil.copytree('tables', os.path.join(basepath, 'tables'))
     shutil.copyfile('snec', os.path.join(basepath, 'snec'))
+    shutil.copymode('snec', os.path.join(basepath, 'snec'))
 
 def write_sbatch_executable(basepath, array_num, snec_dir):
     '''
