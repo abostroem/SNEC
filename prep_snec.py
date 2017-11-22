@@ -83,7 +83,7 @@ def write_sbatch_job(timeout):
     ofile = open('snec_master.sh', 'w')
     ofile.write(
     '''#! /bin/bash -l 
-#SBATCH -t {}
+#SBATCH -t {}:00:00
 #SBATCH --mail-type=begin 
 #SBATCH --mail-type=end 
 #SBATCH --mail-user=kabostroem@ucdavis.edu 
