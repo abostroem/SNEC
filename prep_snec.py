@@ -72,7 +72,7 @@ def write_sbatch_executable(basepath, array_num, snec_dir):
     '''
     ofile = open('snec{}.sh'.format(array_num), 'w')
     ofile.write('cd {}\n'.format(os.path.join(snec_dir, basepath)))
-    ofile.write('.snec &>snec.out')
+    ofile.write('./snec &>snec.out')
     ofile.close()
     os.chmod('snec{}.sh'.format(array_num), stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
 
