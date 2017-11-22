@@ -102,7 +102,7 @@ srun ./snec${}SLURM_ARRAY_TASK_ID{}.sh
 if __name__ == "__main__":      
     #If running on peloton, need to add the line 'module load bio3' to bash_profile
     parser = argparse.ArgumentParser()
-    parser.add_argument('timeout', type=int, nargs=1,
+    parser.add_argument('timeout', type=int, 
                         help='the maximum time for a job to run, this should be twice what you expect it to take')
     args = parser.parse_args()
     snec_dir = os.getcwd()     
@@ -120,6 +120,7 @@ if __name__ == "__main__":
                             parfile_organizer.write_parfile(i_ni_mass, i_ni_mix, imass, ienergy, parameters, basepath)
                             array_num +=1
                             write_sbatch_executable(basepath, array_num, snec_dir)
+    
     write_sbatch_job(args.timeout)
     print('Ready to run, start your jobs with the command:')
     print('sbatch --partition high --array=1-{} ./snec_master.sh'.format(array_num))
