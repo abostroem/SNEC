@@ -72,8 +72,9 @@ def write_sbatch_executable(basepath, array_num, snec_dir):
     Create a file to execute snec for each array job
     '''
     ofile = open('snec{}.sh'.format(array_num), 'w')
+    ofile.write('#!/bin/bash -l \n')
     ofile.write('cd {}\n'.format(os.path.join(snec_dir, basepath)))
-    ofile.write('./snec &>snec.out')
+    ofile.write('./snec &>snec.out\n')
     ofile.close()
     os.chmod('snec{}.sh'.format(array_num), stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
 
