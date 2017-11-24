@@ -91,7 +91,7 @@ def write_sbatch_job(timeout, array_num):
 #SBATCH --job-name='M={}-{},E={}-{},K={}-{}, R={}-{}'
 #SBATCH -o name_%A_%a.out # Standard output
 #SBATCH -e name_%A_%a.err # Standard error
-#SBATH --array=1-{}
+#SBATCH --array=1-{}
 export SEEDFILE=input_dir_list.txt
 export SEED=$(cat $SEEDFILE | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
 cd $SEED
