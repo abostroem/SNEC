@@ -10,6 +10,6 @@ for ifile in flist:
             all_lines = param_file.readlines()
             for iline in all_lines:
                 if iline.startswith('tend'):
-                    tend = float(iline.split('=')[1])
+                    tend = float(iline.split('=')[1].replace('d', 'e').strip('\n'))
             print('{:2.2f} for {}'.format(float(all_lines[-1].split()[0])/tend, ifile))
 
