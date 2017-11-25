@@ -89,8 +89,8 @@ def write_sbatch_job(timeout, array_num):
 #SBATCH --mail-type=end 
 #SBATCH --mail-user=kabostroem@ucdavis.edu 
 #SBATCH --job-name='M={}-{},E={}-{},K={}-{}, R={}-{}'
-#SBATCH -o name_%A_%a.out # Standard output
-#SBATCH -e name_%A_%a.err # Standard error
+#SBATCH -o slurm_%A_%a.out # Standard output
+#SBATCH -e slurm_%A_%a.err # Standard error
 #SBATCH --array=1-{}
 export SEEDFILE=input_dir_list.txt
 export SEED=$(cat $SEEDFILE | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
