@@ -94,8 +94,14 @@ def write_sbatch_job(timeout, array_num):
 #SBATCH --array=1-{}
 export SEEDFILE=input_dir_list.txt
 export SEED=$(cat $SEEDFILE | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
-cd $SEED
-./snec &>snec.out
+mkdir -p /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
+cp -r $SEED /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
+cd /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
+srun ./snec &>snec.out   
+#make sure you captured all your data
+cp /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID/snec.out $SEED
+cp -r /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID/Data $SEED/Data
+rm -rf /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
    '''.format(timeout, parameters['mass'][0], parameters['mass'][-1],
                                             parameters['explosion_energy'][0], parameters['explosion_energy'][-1],
                                             parameters['density_1D'][0], parameters['density_1D'][-1],
