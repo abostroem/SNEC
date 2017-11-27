@@ -128,7 +128,7 @@ if __name__ == "__main__":
                 for indx_energy, ienergy in enumerate(parameters['explosion_energy']):
                     for indx_density, idensity in enumerate(parameters['density_1D']):
                         for indx_radius, iradius in enumerate(parameters['wind_extent']):
-                            basepath=create_directory(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius, overwrite=True)
+                            basepath=create_directory(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius, overwrite=False)
                             copy_files(basepath, imass, idensity, iradius)
                             parfile_organizer.write_parfile(i_ni_mass, i_ni_mix, imass, ienergy, parameters, basepath)
                             array_num +=1
