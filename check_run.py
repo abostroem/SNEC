@@ -30,6 +30,7 @@ def check_run(parameters, base_model_dir):
     for indx_ni_mass, i_ni_mass in enumerate(parameters['ni_mass']):
         for indx_ni_mix, i_ni_mix in enumerate(parameters['ni_mix']):
             for indx_mass, imass in enumerate(parameters['mass']):
+                print('finished mass {} for Ni mass {}'.format(imass, i_ni_mass))
                 for indx_energy, ienergy in enumerate(parameters['explosion_energy']):
                     for indx_density, idensity in enumerate(parameters['density_1D']):
                         for indx_radius, iradius in enumerate(parameters['wind_extent']):
@@ -48,7 +49,7 @@ def check_run(parameters, base_model_dir):
                             #Neither directory exists
                             # --> record directory in missing_list
                             if (unzip_dir_exists is False) and (zip_dir_exists is False):
-                                print('Neither')
+                                #print('Neither')
                                 missing_list.append(path)
                             #Only an unzipped directory exists
                             # --> Look at last time step
@@ -58,7 +59,7 @@ def check_run(parameters, base_model_dir):
                             # --> zip the directory
                             # --> add a message to the log file
                             elif (unzip_dir_exists is True) and (zip_dir_exists is False):
-                                print('only unzip')
+                                #print('only unzip')
                                 last_time_step = get_last_line(os.path.join(path, 'Data', 'lum_observed.dat'))
                                 if last_time_step != parameters['endtime']:
                                     incomplete_list.append('last entry: {} for {}'.format(last_time_step, path))
@@ -76,7 +77,7 @@ def check_run(parameters, base_model_dir):
                             # --> Look at the last time recorded
                             # --> If last time recorded is not the end time, record in incomplete list
                             elif (unzip_dir_exists is False) and (zip_dir_exists is True):
-                                print('only zip')
+                                #print('only zip')
                                 ##try:
                                 ##    tar = tarfile.open(tarfilename, 'r')
                                 ##except (tarfile.ReadError,tarfile.CompressionError,tarfile.StreamError,tarfile.ExtractError):
@@ -103,7 +104,7 @@ def check_run(parameters, base_model_dir):
                             #        check that kept data is complete, if not, add to incomplete list
                         
                             elif (unzip_dir_exists is True) and (zip_dir_exists is True):
-                                print('both')
+                                ##print('both')
                                 untar_file = os.path.join(path, 'Data', 'lum_observed.dat')
                                 lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
                                 last_time_step_untar = get_last_line(untar_file)
@@ -135,7 +136,7 @@ def check_run(parameters, base_model_dir):
                                     if last_time_step_untar < parameters['endtime']:
                                         incomplete_list.append('{}; last time step: {}'.format(path, last_time_step_untar))
                             loop_end = time.time()
-                            print('loop time = {}'.format(loop_end - loop_start))
+                            #print('loop time = {}'.format(loop_end - loop_start))
     ofile_change = open('change_log.txt', 'w')
     for iline in change_list:
         ofile_change.write('{}\n'.format(iline))
