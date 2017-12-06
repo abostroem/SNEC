@@ -77,6 +77,7 @@ def check_run(parameters, base_model_dir):
                             # --> Look at the last time recorded
                             # --> If last time recorded is not the end time, record in incomplete list
                             elif (unzip_dir_exists is False) and (zip_dir_exists is True):
+                                pass
                                 #print('only zip')
                                 ##try:
                                 ##    tar = tarfile.open(tarfilename, 'r')
