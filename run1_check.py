@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import check_run
 import prep_snec
 
