@@ -22,10 +22,6 @@ def get_last_line(filename, handle=False):
         
 def check_run(parameters, base_model_dir):
     start_time = time.time()
-    missing_list = []
-    incomplete_list = []
-    change_list = []
-    error_list = []
     cur_dir = os.getcwd()
     for indx_ni_mass, i_ni_mass in enumerate(parameters['ni_mass']):
         for indx_ni_mix, i_ni_mix in enumerate(parameters['ni_mix']):
@@ -33,6 +29,10 @@ def check_run(parameters, base_model_dir):
                 print('finished mass {} for Ni mass {}'.format(imass, i_ni_mass))
                 for indx_energy, ienergy in enumerate(parameters['explosion_energy']):
                     for indx_density, idensity in enumerate(parameters['density_1D']):
+                        missing_list = []
+                        incomplete_list = []
+                        change_list = []
+                        error_list = []
                         for indx_radius, iradius in enumerate(parameters['wind_extent']):
                             loop_start = time.time()
                             path = os.path.join(base_model_dir,
@@ -45,7 +45,7 @@ def check_run(parameters, base_model_dir):
                             tarfilename = '{}.tar.gz'.format(path)
                             unzip_dir_exists = os.path.exists(path)
                             zip_dir_exists = os.path.isfile(tarfilename)
-                            print(path)
+                            #print(path)
                             #Neither directory exists
                             # --> record directory in missing_list
                             if (unzip_dir_exists is False) and (zip_dir_exists is False):
@@ -77,15 +77,16 @@ def check_run(parameters, base_model_dir):
                             # --> Look at the last time recorded
                             # --> If last time recorded is not the end time, record in incomplete list
                             elif (unzip_dir_exists is False) and (zip_dir_exists is True):
-                                pass
+                                continue
+                            '''
                                 #print('only zip')
+                                #lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
                                 ##try:
                                 ##    tar = tarfile.open(tarfilename, 'r')
+                                ##    ofile = tar.extractfile(lum_file)
                                 ##except (tarfile.ReadError,tarfile.CompressionError,tarfile.StreamError,tarfile.ExtractError):
                                 ##    error_list.append(tarfile)
                                 ##    continue
-                                ##lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
-                                ##ofile = tar.extractfile(lum_file)
                                 ##last_time_step = get_last_line(ofile, handle=True)
                                 ##tar.close()
                                 ##if last_time_step != parameters['endtime']:
@@ -103,7 +104,7 @@ def check_run(parameters, base_model_dir):
                             #        zip the unzipped file
                             #        record remove and zipping in log file
                             #        check that kept data is complete, if not, add to incomplete list
-                        
+                            '''
                             elif (unzip_dir_exists is True) and (zip_dir_exists is True):
                                 ##print('both')
                                 untar_file = os.path.join(path, 'Data', 'lum_observed.dat')
@@ -111,10 +112,10 @@ def check_run(parameters, base_model_dir):
                                 last_time_step_untar = get_last_line(untar_file)
                                 try:
                                     tar = tarfile.open(tarfilename, 'r')
+                                    ofile = tar.extractfile(lum_file)
                                 except (tarfile.ReadError,tarfile.CompressionError,tarfile.StreamError,tarfile.ExtractError):
                                     error_list.append(tarfilename)
                                     continue
-                                ofile = tar.extractfile(lum_file)
                                 last_time_step_tar = get_last_line(ofile, handle=True)
                                 tar.close()
                                 if last_time_step_tar >= last_time_step_untar:
@@ -138,25 +139,27 @@ def check_run(parameters, base_model_dir):
                                         incomplete_list.append('{}; last time step: {}'.format(path, last_time_step_untar))
                             loop_end = time.time()
                             #print('loop time = {}'.format(loop_end - loop_start))
-    ofile_change = open('change_log.txt', 'w')
-    for iline in change_list:
-        ofile_change.write('{}\n'.format(iline))
-    ofile_change.close()
+                        ofile_change = open('change_log.txt', 'a')
+                        for iline in change_list:
+                            ofile_change.write('{}\n'.format(iline))
+                        ofile_change.close()
 
-    ofile_missing = open('missing_files.txt', 'w')
-    for iline in missing_list:
-        ofile_missing.write('{}\n'.format(iline))
-    ofile_missing.close()
+                        ofile_missing = open('missing_files.txt', 'a')
+                        for iline in missing_list:
+                            ofile_missing.write('{}\n'.format(iline))
+                        ofile_missing.close()
 
-    ofile_incomplete = open('incomplete_files.txt', 'w')
-    for iline in incomplete_list:
-        ofile_incomplete.write('{}\n'.format(iline))
-    ofile_incomplete.close()
+                        ofile_incomplete = open('incomplete_files.txt', 'a')
+                        for iline in incomplete_list:
+                            ofile_incomplete.write('{}\n'.format(iline))
+                        ofile_incomplete.close()
     
-    ofile_error = open('error_files.txt', 'w')
-    for iline in error_list:
-        ofile_error.write('{}\n'.format(iline))
-    ofile_error.close()
+                        ofile_error = open('error_files.txt', 'a')
+                        for iline in error_list:
+                            ofile_error.write('{}\n'.format(iline))
+                        ofile_error.close()
+                            
+
     end_time = time.time()
     print('total time = {}'.format(end_time - start_time))                    
 
