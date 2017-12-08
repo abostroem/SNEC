@@ -113,7 +113,10 @@ def check_run(parameters, base_model_dir):
                                 ##print('both')
                                 untar_file = os.path.join(path, 'Data', 'lum_observed.dat')
                                 lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
-                                last_time_step_untar = get_last_line(untar_file)
+                                if os.path.exists(untar_file):
+                                    last_time_step_untar = get_last_line(untar_file)
+                                else:
+                                    continue  #Assume that the tar file is ok
                                 try:
                                     tar = tarfile.open(tarfilename, 'r')
                                     ofile = tar.extractfile(lum_file)
