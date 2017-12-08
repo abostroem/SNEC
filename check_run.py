@@ -64,18 +64,22 @@ def check_run(parameters, base_model_dir, verbose=False):
                             elif (unzip_dir_exists is True) and (zip_dir_exists is False):
                                 if verbose:
                                     print('only unzip')
-                                last_time_step = get_last_line(os.path.join(path, 'Data', 'lum_observed.dat'))
-                                if last_time_step != parameters['endtime']:
-                                    incomplete_list.append('last entry: {} for {}'.format(last_time_step, path))
-                                #tar the directory
-                                log_message = 'Zipping {}'.format(path)
-                                change_list.append(log_message)
-                                os.chdir(os.path.split(path)[0])
-                                tar = tarfile.open(tarfilename, 'w:gz')
-                                tar.add(os.path.split(path)[1])
-                                tar.close()
-                                os.chdir(cur_dir)
-                                shutil.rmtree(path)
+                                if os.path.exists(os.path.join(path, 'Data', 'lum_observed.dat')):
+                                    last_time_step = get_last_line(os.path.join(path, 'Data', 'lum_observed.dat'))
+                                    if last_time_step != parameters['endtime']:
+                                        incomplete_list.append('last entry: {} for {}'.format(last_time_step, path))
+                                    #tar the directory
+                                    log_message = 'Zipping {}'.format(path)
+                                    change_list.append(log_message)
+                                    os.chdir(os.path.split(path)[0])
+                                    tar = tarfile.open(tarfilename, 'w:gz')
+                                    tar.add(os.path.split(path)[1])
+                                    tar.close()
+                                    os.chdir(cur_dir)
+                                    shutil.rmtree(path)
+                                else:
+                                    missing_list.append(path)
+                                    shutil.rmtree(path)
                             #Only zip file
                             # --> Extract the lum_observed file
                             # --> Look at the last time recorded
@@ -99,7 +103,10 @@ def check_run(parameters, base_model_dir, verbose=False):
                                     print('both')
                                 untar_file = os.path.join(path, 'Data', 'lum_observed.dat')
                                 lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
-                                last_time_step_untar = get_last_line(untar_file)
+                                if os.path.exists(untar_file):
+                                    last_time_step_untar = get_last_line(untar_file)
+                                else:
+                                    continue  #Assume that the tar file is ok
                                 try:
                                     tar = tarfile.open(tarfilename, 'r')
                                     ofile = tar.extractfile(lum_file)
