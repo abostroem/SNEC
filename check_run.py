@@ -116,6 +116,8 @@ def check_run(parameters, base_model_dir):
                                 if os.path.exists(untar_file):
                                     last_time_step_untar = get_last_line(untar_file)
                                 else:
+                                    shutil.rmtree(path)
+                                    change_list.append('Removing {} because no lum file and tar exists'.format(path))
                                     continue  #Assume that the tar file is ok
                                 try:
                                     tar = tarfile.open(tarfilename, 'r')
