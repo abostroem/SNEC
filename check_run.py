@@ -11,22 +11,24 @@ def get_last_line(filename, handle=False):
         f = open(filename, 'rb')
     else:
         f = filename
-    
-    first = f.readline()        # Read the first line.
-    f.seek(-2, os.SEEK_END)     # Jump to the second last byte.
-    while f.read(1) != b"\n":   # Until EOL is found...
-        f.seek(-2, os.SEEK_CUR) # ...jump back the read byte plus one more.
-    last = f.readline().decode('ascii')        # Read last line. and convert to string
+    try:    
+        first = f.readline()        # Read the first line.
+        f.seek(-2, os.SEEK_END)     # Jump to the second last byte.
+        while f.read(1) != b"\n":   # Until EOL is found...
+            f.seek(-2, os.SEEK_CUR) # ...jump back the read byte plus one more.
+        last = f.readline().decode('ascii')        # Read last line. and convert to string
+    except IOError:
+        last = f.readlines()[-1].decode('ascii')
     return float(last.split()[0])
         
         
-def check_run(parameters, base_model_dir):
+def check_run(parameters, base_model_dir, verbose=False):
     start_time = time.time()
     cur_dir = os.getcwd()
     for indx_ni_mass, i_ni_mass in enumerate(parameters['ni_mass']):
         for indx_ni_mix, i_ni_mix in enumerate(parameters['ni_mix']):
             for indx_mass, imass in enumerate(parameters['mass']):
-                print('finished mass {} for Ni mass {}'.format(imass, i_ni_mass))
+                print('starting mass {} for Ni mass {}'.format(imass, i_ni_mass))
                 for indx_energy, ienergy in enumerate(parameters['explosion_energy']):
                     for indx_density, idensity in enumerate(parameters['density_1D']):
                         missing_list = []
@@ -45,7 +47,8 @@ def check_run(parameters, base_model_dir):
                             tarfilename = '{}.tar.gz'.format(path)
                             unzip_dir_exists = os.path.exists(path)
                             zip_dir_exists = os.path.isfile(tarfilename)
-                            #print(path)
+                            if verbose:
+                                print(path)
                             #Neither directory exists
                             # --> record directory in missing_list
                             if (unzip_dir_exists is False) and (zip_dir_exists is False):
@@ -59,7 +62,8 @@ def check_run(parameters, base_model_dir):
                             # --> zip the directory
                             # --> add a message to the log file
                             elif (unzip_dir_exists is True) and (zip_dir_exists is False):
-                                #print('only unzip')
+                                if verbose:
+                                    print('only unzip')
                                 if os.path.exists(os.path.join(path, 'Data', 'lum_observed.dat')):
                                     last_time_step = get_last_line(os.path.join(path, 'Data', 'lum_observed.dat'))
                                     if last_time_step != parameters['endtime']:
@@ -82,19 +86,6 @@ def check_run(parameters, base_model_dir):
                             # --> If last time recorded is not the end time, record in incomplete list
                             elif (unzip_dir_exists is False) and (zip_dir_exists is True):
                                 continue
-                            '''
-                                #print('only zip')
-                                #lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
-                                ##try:
-                                ##    tar = tarfile.open(tarfilename, 'r')
-                                ##    ofile = tar.extractfile(lum_file)
-                                ##except (tarfile.ReadError,tarfile.CompressionError,tarfile.StreamError,tarfile.ExtractError):
-                                ##    error_list.append(tarfile)
-                                ##    continue
-                                ##last_time_step = get_last_line(ofile, handle=True)
-                                ##tar.close()
-                                ##if last_time_step != parameters['endtime']:
-                                ##    incomplete_list.append('{}; last time step: {}'.format(path, last_time_step))
                             #If both exist   
                             # --> Extract the lum_observed file
                             # --> Look at the last time recorded
@@ -107,10 +98,9 @@ def check_run(parameters, base_model_dir):
                             #        remove the zipped file
                             #        zip the unzipped file
                             #        record remove and zipping in log file
-                            #        check that kept data is complete, if not, add to incomplete list
-                            '''
                             elif (unzip_dir_exists is True) and (zip_dir_exists is True):
-                                ##print('both')
+                                if verbose:
+                                    print('both')
                                 untar_file = os.path.join(path, 'Data', 'lum_observed.dat')
                                 lum_file = os.path.join('R_{}'.format(int(iradius)), 'Data', 'lum_observed.dat')
                                 if os.path.exists(untar_file):
@@ -122,7 +112,7 @@ def check_run(parameters, base_model_dir):
                                 try:
                                     tar = tarfile.open(tarfilename, 'r')
                                     ofile = tar.extractfile(lum_file)
-                                except (tarfile.ReadError,tarfile.CompressionError,tarfile.StreamError,tarfile.ExtractError):
+                                except (EOFError, tarfile.ReadError,tarfile.CompressionError,tarfile.StreamError,tarfile.ExtractError):
                                     error_list.append(tarfilename)
                                     continue
                                 last_time_step_tar = get_last_line(ofile, handle=True)
