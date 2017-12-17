@@ -55,7 +55,7 @@ class SnecAnalysis(object):
 
 
     def calc_chisq_base_model(self, sn_lc):
-        chisq = np.ones((len(self.masses), len(self.energies), len(self.time_offsets), len(self.ni_mixing)))*1E10
+        chisq = np.ones((len(self.masses), len(self.energies), len(self.time_offsets), len(self.ni_mixing)))*np.nan
         skip_filters = []
         for ni_indx, ni_mix in enumerate(self.ni_mixing):
             for mindx, imass in enumerate(self.masses):
@@ -69,8 +69,8 @@ class SnecAnalysis(object):
                                                      'M{}'.format(imass),
                                                      'E_{:}'.format(ienergy),
                                                      'Data')
-                    if not os.path.exists(model_dir):
-                        print("Model doesn't exist: K={},radius={}".format(iK, iradius))
+                    if not os.path.exists(os.path.join(model_dir, 'magnitudes.dat')):
+                        print("Model doesn't exist: M={},E={}".format(imass, ienergy))
                         continue
                     model_mag_tbdata = self.prepare_model_data(model_dir)
                     if model_mag_tbdata is not None: #Successful explosion model
@@ -175,7 +175,7 @@ class SnecAnalysis(object):
                 ax = fig.add_subplot(1,1,1) 
                 im = ax.imshow(self.base_model_chisq[:,:,tindx,0], 
                             interpolation='nearest', 
-                            vmin=vmin, vmax=vmax,
+                            #vmin=vmin, vmax=vmax,
                             extent=[self.energies[0]-.2, self.energies[-1]+.2, self.masses[0]-.2, self.masses[-1]+.2],
                             aspect='auto')   
                 if toffset == self.best_time_offset:
@@ -196,7 +196,7 @@ class SnecAnalysis(object):
         ax = fig.add_subplot(1,1,1) 
         im = ax.imshow(self.csm_model_chisq[:,:], 
                     interpolation='nearest', 
-                    vmin=vmin, vmax=vmax,
+                    #vmin=vmin, vmax=vmax,
                     extent=[self.radii[0], self.radii[-1], float(self.Kvalues[0]), float(self.Kvalues[-1])],
                     aspect='auto')   
         plt.axvline(self.best_radius, color='r')
