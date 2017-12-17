@@ -41,7 +41,7 @@ for indx, iradius in enumerate(r_values):
     ofile.write('cd {} \n'.format(os.path.join(BASEPATH, sndir, k_dir, radius_dir)))
     ofile.write('./snec &>snec.out & \n')
     ofile.close()
-    os.chmod('snec_wind{}.sh'.format(indx+1), stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
+    os.chmod('snec_wind{}.sh'.format(indx+1+start_indx), stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | stat.S_IWUSR | stat.S_IRUSR)
 
 
 
