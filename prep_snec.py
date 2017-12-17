@@ -136,7 +136,7 @@ if __name__ == "__main__":
     write_directory_list(path_list)
     write_sbatch_job(args.timeout, array_num)
     print('Ready to run, start your jobs with the command:')
-    print('sbatch --partition high ./snec_array_job.sh'.format(array_num))
+    print('sbatch --partition low ./snec_array_job.sh'.format(array_num))
                     
                         
 
