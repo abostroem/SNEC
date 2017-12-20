@@ -14,7 +14,7 @@ import define_filters
 class SnecAnalysis(object):
     def __init__(self, snname, base_dir, S2_start, S2_end, ni_mass,
                  ni_mixing, masses, energies, time_offsets, 
-                 Kvalues=None, radii=None, fig_dir=None):
+                 Kvalues, radii, fig_dir=None):
         self.name = snname
         self.base_dir = base_dir
         self.S2_start = S2_start
@@ -55,20 +55,23 @@ class SnecAnalysis(object):
     def calc_chisq(self, sn_lc):
         skip_filters = []
         start_now = True
-        ofile = open('chisq_table.txt', 'r')
-        all_lines = ofile.readlines()
-        if len(all_lines) > 0:
-            last_line = all_lines[-1]
-            split_last_line = last_line.split(',')
-            last_complete_dir = os.path.join(self.base_dir, 
-                             'Ni_mass_{:1.4f}'.format(split_last_line[0]),
-                             'Ni_mixing_{:1.1f}'.format(split_last_line[1]),
-                             'M{:2.1f}'.format(split_last_line[2]),
-                             'E_{:1.3f}'.format(split_last_line[3]),
-                             'K_{:2.1f}'.format(split_last_line[4]), 
-                             'R_{}'.format(int(split_last_line[5])),
-                             'Data')
-            start_now = False
+        if not os.path.exists('chisq_table.txt'):
+            ofile = open('chisq_table.txt', 'w')
+        else:
+            ofile = open('chisq_table.txt', 'r')
+            all_lines = ofile.readlines()
+            if len(all_lines) > 0:
+                last_line = all_lines[-1]
+                split_last_line = last_line.split(',')
+                last_complete_dir = os.path.join(self.base_dir, 
+                                 'Ni_mass_{:1.4f}'.format(float(split_last_line[0])),
+                                 'Ni_mixing_{:1.1f}'.format(float(split_last_line[1])),
+                                 'M{:2.1f}'.format(float(split_last_line[2])),
+                                 'E_{:1.3f}'.format(float(split_last_line[3])),
+                                 'K_{:2.1f}'.format(float(split_last_line[4])), 
+                                 'R_{}'.format(int(split_last_line[5])),
+                                 'Data')
+                start_now = False
         with open('chisq_table.txt', 'a') as output_ofile:
             with open('missing_mag_files.txt', 'a') as missing_ofile:
                 chisq = np.ones((len(self.ni_mass), 
@@ -121,11 +124,12 @@ class SnecAnalysis(object):
                                                         else:
                                                             missing_ofile.write("Failed (LC too short) Model: NiMass={},NiMix={},M={},E={},K={}, R={}\n".format(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius))
                                                             chisq_filters.append(1E10) #if a model doesn't explode it should never be the best model
-                                                        chisq[ni_mindx, ni_indx, mindx, eindx, kindx, rindx, tindx] = np.sum(np.array(chisq_filters))
-                                                        output_ofile.write('{},{},{},{},{},{},{},{}\n'.format(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius, toffset, chisq[ni_mindx, ni_indx, mindx, eindx, kindx, rindx, tindx]))
-                                                        output_ofile.flush()
+                                                
                                                     else:
-                                                        skip_filters.append(ifilter)            
+                                                        skip_filters.append(ifilter)  
+                                                chisq[ni_mindx, ni_indx, mindx, eindx, kindx, rindx, tindx] = np.sum(np.array(chisq_filters))
+                                                output_ofile.write('{},{},{},{},{},{},{},{}\n'.format(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius, toffset, chisq[ni_mindx, ni_indx, mindx, eindx, kindx, rindx, tindx]))
+                                                output_ofile.flush()          
                                         else:
                                             missing_ofile.write("Failed (unexploded) Model: NiMass={},NiMix={},M={},E={},K={}, R={}\n".format(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius))
         print('Skipped Filters {} b/c <5 points in fit region'.format(set(skip_filters)))
