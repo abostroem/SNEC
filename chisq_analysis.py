@@ -172,8 +172,10 @@ class SnecAnalysis(object):
         self.best_ni_mix = self.tbdata['ni_mixing'][best_model_row]
         self.best_mass = self.tbdata['mass'][best_model_row]
         self.best_energy = self.tbdata['energy'][best_model_row]
-        self.best_Kvalue = self.tbdata['kvalue'][best_model_row]
-        self.best_radius = self.tbdata['radius'][best_model_row]
+        #self.best_Kvalue = self.tbdata['kvalue'][best_model_row]
+        #self.best_radius = self.tbdata['radius'][best_model_row]
+        self.best_Kvalue = 30.0
+        self.best_radius = 2400
         self.best_time_offset = self.tbdata['time_offset'][best_model_row]
         self.best_model_dir = os.path.join(self.base_dir, 
                                          'Ni_mass_{:1.4f}'.format(self.best_ni_mass),
@@ -192,7 +194,7 @@ class SnecAnalysis(object):
         self.get_best_model(return_model=True)
         if band == 'all':
             bands = sn_lc.abs_mag.keys()
-        elif len(bands) == 1:
+        elif len(band) == 1:
             bands = [band]
         else:
             bands = band
@@ -201,7 +203,7 @@ class SnecAnalysis(object):
         fig = plt.figure()
         ax = fig.add_subplot(1,1,1)
         for iband in filter_dict.keys():
-            if iband in bands:
+            if (iband in bands) and (iband in self.best_model_tbdata.colnames):
                 l = ax.errorbar(sn_lc.phase[iband], sn_lc.abs_mag[iband]-offset, sn_lc.abs_mag_err[iband], fmt='o', linestyle='none', label='{} data+{}'.format(iband, offset))
                 ax.plot(self.best_model_tbdata['time'], self.best_model_tbdata[iband]-offset, color=l[0].get_color(), ls='--', label='{}+{}'.format(iband, offset))
 
@@ -210,7 +212,7 @@ class SnecAnalysis(object):
         ax.set_title('Light Curve and SNEC Models for {}'.format(self.name))
         ax.set_ylim(ax.get_ylim()[::-1])
         ax.legend(loc=3, ncol=2)
-        plt.savefig(os.path.join(self.fig_dir, '{}_snec_lc.pdf'.format(self.name)))
+        plt.savefig(os.path.join(self.fig_dir, '{}_snec_run1.pdf'.format(self.name)))
         
     def read_chisq(self):
         #import pdb; pdb.set_trace()
