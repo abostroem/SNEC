@@ -27,6 +27,7 @@ class SnecAnalysis(object):
         self.Kvalues = Kvalues
         self.radii = radii
         self.fig_dir = fig_dir
+        self.chisq = None
 
     def get_breakout_time(self, model_dir):
         ofile = open(os.path.join(model_dir, 'info.dat'), 'r')
@@ -187,7 +188,73 @@ class SnecAnalysis(object):
         ax.legend(loc=3, ncol=2)
         plt.savefig(os.path.join(self.fig_dir, '{}_snec_lc.pdf'.format(self.name)))
         
- 
+    def read_chisq(self):
+        #import pdb; pdb.set_trace()
+        tbdata = asc.read('chisq_table.txt', names=['ni_mass', 'ni_mixing', 'mass', 'energy', 'kvalue', 'radius', 'time_offset', 'chisq'])
+        self.chisq = np.ones((len(self.ni_mass), 
+                 len(self.ni_mixing), 
+                 len(self.masses), 
+                 len(self.energies),
+                 len(self.Kvalues),
+                 len(self.radii),
+                 len(self.time_offsets)))*np.nan
+        for ni_mindx, i_ni_mass in enumerate(self.ni_mass):
+            for ni_indx, i_ni_mix in enumerate(self.ni_mixing):
+                for mindx, imass in enumerate(self.masses):
+                    for eindx, ienergy in enumerate(self.energies):
+                        for kindx, idensity in enumerate(self.Kvalues):
+                            for rindx, iradius in enumerate(self.radii):
+                                for tindx, toffset in enumerate(self.time_offsets):
+                                    irow_indx = np.where((tbdata['ni_mass']== i_ni_mass) & 
+                                                    (tbdata['ni_mixing'] == i_ni_mix) & 
+                                                    (tbdata['mass'] == imass) &
+                                                    (tbdata['energy'] == ienergy) & 
+                                                    (tbdata['kvalue'] == idensity) & 
+                                                    (tbdata['radius'] == iradius) & 
+                                                    (tbdata['time_offset'] == toffset))[0]
+                                    if len(irow_indx) == 1:
+                                        self.chisq[ni_mindx, ni_indx, mindx, eindx, kindx, rindx, tindx] = tbdata['chisq'][irow_indx]
+    
+
+    def plot_2D(self,axis1, axis2):
+        axes = ['Ni Mass', 'Ni Mixing', 'Progenitor Mass', 'Explosion Energy', 'CSM Density', 'CSM radius', 'Time Offset']
+        assert axis1 in axes, 'axis1={} is not a valid entry, valid entries are {}'.format(axis1, axes)
+        assert axis1 in axes, 'axis2={} is not a valid entry, valid entries are {}'.format(axis2, axes)
+        best_indx = np.argwhere(self.chisq == np.nanmin(self.chisq))[0]
+        marginalized_chisq = self.chisq.copy()
+        axis1_set = False
+        axis2_set = False
+        if (axis1 != 'Ni Mass') and (axis2 != 'Ni Mass'):
+            marginalized_chisq = marginalized_chisq[[best_indx[0]],:,:,:,:,:,:]
+        if (axis1 != 'Ni Mixing') and (axis2 != 'Ni Mixing'):
+            marginalized_chisq = marginalized_chisq[:, [best_indx[1]],:,:,:,:,:] 
+        if (axis1 != 'Progenitor Mass') and (axis2 != 'Progenitor Mass'):
+            marginalized_chisq = marginalized_chisq[:,:,[best_indx[2]],:,:,:,:]
+        if (axis1 != 'Explosion Energy') and (axis2 != 'Explosion Energy'):
+            marginalized_chisq = marginalized_chisq[:,:,:,[best_indx[3]],:,:,:]
+        if (axis1 != 'CSM Density') and (axis2 != 'CSM Density'):
+            marginalized_chisq = marginalized_chisq[:,:,:,:,[best_indx[4]],:,:]
+        if (axis1 != 'CSM radius') and (axis2 != 'CSM radius'):
+            marginalized_chisq = marginalized_chisq[:,:,:,:,:,[best_indx[5]],:]
+        if (axis1 != 'Time Offset') and (axis2 != 'Time Offset'):
+            marginalized_chisq = marginalized_chisq[:,:,:,:,:,:,[best_indx[6]]]
+        
+        #figure out which axes we have left
+        #Get the size of each axis, choose the largest 2, put back in input order
+        axis_indx = np.sort(np.argsort(marginalized_chisq.shape)[::-1]) 
+        #TODO figure out how to switch what value is on what axis
+        plt.imshow(marginalized_chisq, interpolation='nearest')
+        plt.xlabel(axes[axis_indx[0]])
+        plt.ylabel(axes[axis_indx[1]])
+        plt.title('Best Chisquare for {} and {}'.format(axis1, axis2))
+        plt.suptitle('{}={}, {}={}, {}={}, {}={}, {}={}'.format(axes[axis_indx[2]], marginalized_chisq[axis_indx[2]],
+                                                                axes[axis_indx[3]], marginalized_chisq[axis_indx[3]],
+                                                                axes[axis_indx[4]], marginalized_chisq[axis_indx[4]],
+                                                                axes[axis_indx[5]], marginalized_chisq[axis_indx[5]],
+                                                                axes[axis_indx[6]], marginalized_chisq[axis_indx[6]]))
+        plt.colorbar()
+        
+        
 # Write every step
 # Check that file exists
 # Write issues to log file   
