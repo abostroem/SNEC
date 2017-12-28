@@ -162,10 +162,34 @@ class SnecAnalysis(object):
 
         self.best_model_tbdata = self.prepare_model_data(self.best_model_dir)
         self.model_chisq = chisq
-        
+
+
+    def get_best_model(self, return_model=False):
+        if not hasattr(self,'tbdata'):
+            self.read_chisq()
+        best_model_row = np.nanargmin(self.tbdata['chisq'])
+        self.best_ni_mass = self.tbdata['ni_mass'][best_model_row]
+        self.best_ni_mix = self.tbdata['ni_mixing'][best_model_row]
+        self.best_mass = self.tbdata['mass'][best_model_row]
+        self.best_energy = self.tbdata['energy'][best_model_row]
+        self.best_Kvalue = self.tbdata['kvalue'][best_model_row]
+        self.best_radius = self.tbdata['radius'][best_model_row]
+        self.best_time_offset = self.tbdata['time_offset'][best_model_row]
+        self.best_model_dir = os.path.join(self.base_dir, 
+                                         'Ni_mass_{:1.4f}'.format(self.best_ni_mass),
+                                         'Ni_mixing_{:1.1f}'.format(self.best_ni_mix),
+                                         'M{:2.1f}'.format(self.best_mass),
+                                         'E_{:1.3f}'.format(self.best_energy),
+                                         'K_{:2.1f}'.format(self.best_Kvalue), 
+                                         'R_{}'.format(int(self.best_radius)),
+                                         'Data')
+        if return_model is True:
+            self.best_model_tbdata = self.prepare_model_data(self.best_model_dir)
+     
 
 
     def plot_lightcurve(self, sn_lc, band='all'):
+        self.get_best_model(return_model=True)
         if band == 'all':
             bands = sn_lc.abs_mag.keys()
         elif len(bands) == 1:
@@ -190,69 +214,123 @@ class SnecAnalysis(object):
         
     def read_chisq(self):
         #import pdb; pdb.set_trace()
-        tbdata = asc.read('chisq_table.txt', names=['ni_mass', 'ni_mixing', 'mass', 'energy', 'kvalue', 'radius', 'time_offset', 'chisq'])
-        self.chisq = np.ones((len(self.ni_mass), 
-                 len(self.ni_mixing), 
-                 len(self.masses), 
-                 len(self.energies),
-                 len(self.Kvalues),
-                 len(self.radii),
-                 len(self.time_offsets)))*np.nan
-        for ni_mindx, i_ni_mass in enumerate(self.ni_mass):
-            for ni_indx, i_ni_mix in enumerate(self.ni_mixing):
-                for mindx, imass in enumerate(self.masses):
-                    for eindx, ienergy in enumerate(self.energies):
-                        for kindx, idensity in enumerate(self.Kvalues):
-                            for rindx, iradius in enumerate(self.radii):
-                                for tindx, toffset in enumerate(self.time_offsets):
-                                    irow_indx = np.where((tbdata['ni_mass']== i_ni_mass) & 
-                                                    (tbdata['ni_mixing'] == i_ni_mix) & 
-                                                    (tbdata['mass'] == imass) &
-                                                    (tbdata['energy'] == ienergy) & 
-                                                    (tbdata['kvalue'] == idensity) & 
-                                                    (tbdata['radius'] == iradius) & 
-                                                    (tbdata['time_offset'] == toffset))[0]
-                                    if len(irow_indx) == 1:
-                                        self.chisq[ni_mindx, ni_indx, mindx, eindx, kindx, rindx, tindx] = tbdata['chisq'][irow_indx]
-    
-
-    def plot_2D(self,axis1, axis2):
-        axes = ['Ni Mass', 'Ni Mixing', 'Progenitor Mass', 'Explosion Energy', 'CSM Density', 'CSM radius', 'Time Offset']
-        assert axis1 in axes, 'axis1={} is not a valid entry, valid entries are {}'.format(axis1, axes)
-        assert axis1 in axes, 'axis2={} is not a valid entry, valid entries are {}'.format(axis2, axes)
-        best_indx = np.argwhere(self.chisq == np.nanmin(self.chisq))[0]
-        marginalized_chisq = self.chisq.copy()
-        axis1_set = False
-        axis2_set = False
-        if (axis1 != 'Ni Mass') and (axis2 != 'Ni Mass'):
-            marginalized_chisq = marginalized_chisq[[best_indx[0]],:,:,:,:,:,:]
-        if (axis1 != 'Ni Mixing') and (axis2 != 'Ni Mixing'):
-            marginalized_chisq = marginalized_chisq[:, [best_indx[1]],:,:,:,:,:] 
-        if (axis1 != 'Progenitor Mass') and (axis2 != 'Progenitor Mass'):
-            marginalized_chisq = marginalized_chisq[:,:,[best_indx[2]],:,:,:,:]
-        if (axis1 != 'Explosion Energy') and (axis2 != 'Explosion Energy'):
-            marginalized_chisq = marginalized_chisq[:,:,:,[best_indx[3]],:,:,:]
-        if (axis1 != 'CSM Density') and (axis2 != 'CSM Density'):
-            marginalized_chisq = marginalized_chisq[:,:,:,:,[best_indx[4]],:,:]
-        if (axis1 != 'CSM radius') and (axis2 != 'CSM radius'):
-            marginalized_chisq = marginalized_chisq[:,:,:,:,:,[best_indx[5]],:]
-        if (axis1 != 'Time Offset') and (axis2 != 'Time Offset'):
-            marginalized_chisq = marginalized_chisq[:,:,:,:,:,:,[best_indx[6]]]
+        self.tbdata = asc.read('chisq_table.txt', names=['ni_mass', 'ni_mixing', 'mass', 'energy', 'kvalue', 'radius', 'time_offset', 'chisq'])
         
-        #figure out which axes we have left
-        #Get the size of each axis, choose the largest 2, put back in input order
-        axis_indx = np.sort(np.argsort(marginalized_chisq.shape)[::-1]) 
-        #TODO figure out how to switch what value is on what axis
-        plt.imshow(marginalized_chisq, interpolation='nearest')
-        plt.xlabel(axes[axis_indx[0]])
-        plt.ylabel(axes[axis_indx[1]])
-        plt.title('Best Chisquare for {} and {}'.format(axis1, axis2))
-        plt.suptitle('{}={}, {}={}, {}={}, {}={}, {}={}'.format(axes[axis_indx[2]], marginalized_chisq[axis_indx[2]],
-                                                                axes[axis_indx[3]], marginalized_chisq[axis_indx[3]],
-                                                                axes[axis_indx[4]], marginalized_chisq[axis_indx[4]],
-                                                                axes[axis_indx[5]], marginalized_chisq[axis_indx[5]],
-                                                                axes[axis_indx[6]], marginalized_chisq[axis_indx[6]]))
-        plt.colorbar()
+
+    def plot_2D(self,plot_ni_mass=False, plot_ni_mix=False, plot_mass=False, plot_energy=False,
+                plot_Kvalue=False, plot_radius = False, plot_time_offset=False):
+        axis1 = None
+        axis2 = None
+        if plot_ni_mass is False:
+            global_indx = (self.tbdata['ni_mass']==self.best_ni_mass)
+            fixed_param_str = 'Ni Mass={}'.format(self.best_ni_mass)
+        else:
+            axis1='ni_mass'
+            axis1_label = 'Ni Mass (Msun)'
+            parameter1 = self.ni_mass
+            fixed_param_str = ''
+            global_indx = np.ones(len(self.tbdata), dtype=bool)
+        if plot_ni_mix is False:
+            global_indx = global_indx & (self.tbdata['ni_mixing']==self.best_ni_mix)
+            fixed_param_str = '{}, Ni Mix={}'.format(fixed_param_str, self.best_ni_mix)
+        else:
+            if axis1 is None:
+                axis1 = 'ni_mix'
+                parameter1 = self.ni
+                axis1_label = 'Ni Core Mixing (Rsun)'
+            else:
+                axis2 = 'ni_mix'
+                axis2_label = 'Ni Core Mixing (Rsun)'
+        if plot_mass is False:
+            global_indx = global_indx & (self.tbdata['mass']==self.best_mass)
+            fixed_param_str = '{}, Mass={}'.format(fixed_param_str, self.best_mass)
+        else:
+            if axis1 is None:
+                axis1 = 'mass'
+                axis1_label = 'Progenitor Mass (Msun)'
+                parameter1 = self.masses
+            elif axis2 is None:
+                axis2 = 'mass'
+                axis2_label = 'Progenitor Mass (Msun)'
+                parameter2 = self.masses
+            else:
+                sys.exit('More than 2 axes specified')
+        if plot_energy is False:
+            global_indx = global_indx & (self.tbdata['energy']==self.best_energy)
+            fixed_param_str = '{}, Energy={}'.format(fixed_param_str, self.best_energy)
+        else:
+            if axis1 is None:
+                axis1 = 'energy'
+                axis1_label = 'Explosion Energy'
+                parameter1 = self.energies
+            elif axis2 is None:
+                axis2 = 'energy'
+                parameter2 =self.energies
+                axis2_label = 'Explosion Energy'
+            else:
+                sys.exit('More than 2 axes specified')
+        if plot_Kvalue is False:
+            global_indx = global_indx & (self.tbdata['kvalue']==self.best_Kvalue)
+            fixed_param_str = '{}, K Value={}'.format(fixed_param_str, self.best_Kvalue)
+        else:
+            if axis1 is None:
+                axis1 = 'kvalue'
+                axis1_label = 'CSM Density ($x10^{17}$ g/cm)'
+                parameter1 = self.Kvalues
+            elif axis2 is None:
+                axis2 = 'kvalue'
+                axis2_label = 'CSM Density ($x10^{17}$ g/cm)'
+                parameter2 = self.Kvalues
+            else:
+                sys.exit('More than 2 axes specified')
+        if plot_radius is False:
+            global_indx = global_indx &  (self.tbdata['radius']==self.best_radius)
+            fixed_param_str = '{}, CSM Radius={}'.format(fixed_param_str, self.best_radius)
+        else:
+            if axis1 is None:
+                axis1 = 'radius'
+                axis1_label = 'CSM Radial Extent (Rsun)'
+                parameter1 = self.radii
+            elif axis2 is None:
+                axis2 = 'radius'
+                axis2_label = 'CSM Radial Extent (Rsun)'
+                parameter2 = self.radii
+            else:
+                sys.exit('More than 2 axes specified')
+        if plot_time_offset is False:
+            global_indx = global_indx &  (self.tbdata['time_offset']==self.best_time_offset)
+            fixed_param_str = '{}, Time Off={}'.format(fixed_param_str, self.best_time_offset)
+        else:
+            if axis1 is None:
+                sys.exit('You much choose 2 axes to plot')
+            elif axis2 is None:
+                axis2 = 'time_offset'
+                parameter2 = self.best_time_offset
+                axis2_label = 'Time Offset from Explosion Epoch (days)'
+            else:
+                sys.exit('More than 2 axes specified')
+        plot_tbdata = self.tbdata[global_indx]
+        chisq = np.empty((len(parameter1), len(parameter2)))*np.nan
+        parameter1.sort() #just in case listed out of order
+        parameter2.sort() #just in case listed out of order
+        for indx1, val1 in enumerate(parameter1):
+            for indx2, val2 in enumerate(parameter2):
+                if np.all((plot_tbdata[axis1]==val1)&(plot_tbdata[axis2]==val2)==False):
+                    pass
+                else:
+                    chisq[indx1, indx2] = plot_tbdata['chisq'][(plot_tbdata[axis1]==val1)&(plot_tbdata[axis2]==val2)]
+        fig = plt.figure()
+        ax = fig.add_subplot(111) 
+        im = ax.imshow(chisq, interpolation='nearest', aspect='auto', cmap=plt.get_cmap('viridis'))
+        ax.set_xlabel(axis2_label)
+        ax.set_ylabel(axis1_label)
+        ax.set_title('Best Chisquare for {} and {}'.format(axis1, axis2))
+        fig.suptitle(fixed_param_str)
+        fig.colorbar(mappable=im)
+        ax.set_xticklabels([0]+['{}'.format(i) for i in parameter2])
+        ax.set_yticklabels([0]+['{}'.format(i) for i in parameter1])
+        plt.savefig(os.path.join(self.fig_dir, 'chisq_{}_{}.pdf'.format(axis1,axis2)))
+        #ax.contour(np.log10(chisq), cmap=plt.get_cmap('Reds'))
         
         
 # Write every step
