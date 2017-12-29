@@ -114,6 +114,7 @@ class SnecAnalysis(object):
                                             for tindx, toffset in enumerate(self.time_offsets):
                                                 #Loop over filters
                                                 for ifilter in sn_lc.abs_mag.keys():
+                                                    import pdb; pdb.set_trace()
                                                     if (ifilter in model_mag_tbdata.colnames) and (ifilter not in ['U', 'B']):
                                                         pre_fall_indx = (sn_lc.phase[ifilter]+offset <=self.S2_end)
                                                         if len(sn_lc.phase[ifilter][pre_fall_indx]) > 5:
