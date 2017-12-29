@@ -121,7 +121,7 @@ class SnecAnalysis(object):
                                                                 interp_mod_mag = np.interp(sn_lc.phase[ifilter][pre_fall_indx]+toffset, 
                                                                                            model_mag_tbdata['time'], 
                                                                                            model_mag_tbdata[ifilter])
-                                                                chisq_tmp = np.sum(((sn_lc.abs_mag[ifilter][pre_fall_indx]-interp_mod_mag)/sn_lc.abs_mag_err[ifilter][pre_fall_indx])**2)
+                                                                chisq_tmp = np.sum(((sn_lc.abs_mag[ifilter][pre_fall_indx]-interp_mod_mag)/sn_lc.abs_mag_err[ifilter][pre_fall_indx])**2)/len(interp_mod_mag)
                                                                 chisq_filters.append(chisq_tmp)
                                                             else:
                                                                 missing_ofile.write("Failed (LC too short) Model: NiMass={},NiMix={},M={},E={},K={}, R={}\n".format(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius))
