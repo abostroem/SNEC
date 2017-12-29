@@ -114,8 +114,8 @@ class SnecAnalysis(object):
                                             for tindx, toffset in enumerate(self.time_offsets):
                                                 #Loop over filters
                                                 for ifilter in sn_lc.abs_mag.keys():
-                                                    if ifilter in model_mag_tbdata.colnames:
-                                                        pre_fall_indx = (sn_lc.phase[ifilter] <=self.S2_end)
+                                                    if (ifilter in model_mag_tbdata.colnames) and (ifilter not in ['U', 'B']):
+                                                        pre_fall_indx = (sn_lc.phase[ifilter]+offset <=self.S2_end)
                                                         if len(sn_lc.phase[ifilter][pre_fall_indx]) > 5:
                                                             if model_mag_tbdata['time'][-1]-toffset > self.S2_end:
                                                                 interp_mod_mag = np.interp(sn_lc.phase[ifilter][pre_fall_indx]+toffset, 
@@ -190,6 +190,14 @@ class SnecAnalysis(object):
                                          'Data')
         if return_model is True:
             self.best_model_tbdata = self.prepare_model_data(self.best_model_dir)
+        print('Best chi square for Ni mixing={}, Ni mass = {}, mass={}, energy={}, density = {}, radius = {}, time offset={}'.format(
+                    self.best_ni_mass,
+                    self.best_ni_mix,
+                    self.best_mass,
+                    self.best_energy,
+                    self.best_Kvalue,
+                    self.best_radius,
+                    self.best_time_offset))
      
 
 
@@ -207,7 +215,7 @@ class SnecAnalysis(object):
         ax = fig.add_subplot(1,1,1)
         for iband in filter_dict.keys():
             if (iband in bands) and (iband in self.best_model_tbdata.colnames):
-                l = ax.errorbar(sn_lc.phase[iband], sn_lc.abs_mag[iband]-offset, sn_lc.abs_mag_err[iband], fmt='o', linestyle='none', label='{} data+{}'.format(iband, offset))
+                l = ax.errorbar(sn_lc.phase[iband]+self.best_time_offset, sn_lc.abs_mag[iband]-offset, sn_lc.abs_mag_err[iband], fmt='o', linestyle='none', label='{} data+{}'.format(iband, offset))
                 ax.plot(self.best_model_tbdata['time'], self.best_model_tbdata[iband]-offset, color=l[0].get_color(), ls='--', label='{}+{}'.format(iband, offset))
 
         ax.set_xlabel('Phase (days)')
