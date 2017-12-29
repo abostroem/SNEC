@@ -112,6 +112,7 @@ class SnecAnalysis(object):
                                             chisq_filters = []
                                             #Loop over time shifts
                                             for tindx, toffset in enumerate(self.time_offsets):
+                                                import pdb; pdb.set_trace()
                                                 #Loop over filters
                                                 for ifilter in sn_lc.abs_mag.keys():
                                                     if (ifilter in model_mag_tbdata.colnames) and (ifilter not in ['U', 'B']):
