@@ -114,13 +114,13 @@ class SnecAnalysis(object):
                                             for tindx, toffset in enumerate(self.time_offsets):
                                                 #Loop over filters
                                                 for ifilter in sn_lc.abs_mag.keys():
-                                                    s2_indx = (sn_lc.phase[ifilter] >= self.S2_start)& (sn_lc.phase[ifilter] <=self.S2_end)
-                                                    if len(sn_lc.phase[ifilter][s2_indx]) > 5:
-                                                        if model_mag_tbdata['time'][-1]+toffset > self.S2_end:
-                                                            interp_mod_mag = np.interp(sn_lc.phase[ifilter][s2_indx]+toffset, 
+                                                    pre_fall_indx = (sn_lc.phase[ifilter] <=self.S2_end)
+                                                    if len(sn_lc.phase[ifilter][pre_fall_indx]) > 5:
+                                                        if model_mag_tbdata['time'][-1]-toffset > self.S2_end:
+                                                            interp_mod_mag = np.interp(sn_lc.phase[ifilter][pre_fall_indx]+toffset, 
                                                                                        model_mag_tbdata['time'], 
                                                                                        model_mag_tbdata[ifilter])
-                                                            chisq_tmp = np.sum(((sn_lc.abs_mag[ifilter][s2_indx]-interp_mod_mag)/sn_lc.abs_mag_err[ifilter][s2_indx])**2)
+                                                            chisq_tmp = np.sum(((sn_lc.abs_mag[ifilter][pre_fall_indx]-interp_mod_mag)/sn_lc.abs_mag_err[ifilter][pre_fall_indx])**2)
                                                             chisq_filters.append(chisq_tmp)
                                                         else:
                                                             missing_ofile.write("Failed (LC too short) Model: NiMass={},NiMix={},M={},E={},K={}, R={}\n".format(i_ni_mass, i_ni_mix, imass, ienergy, idensity, iradius))
@@ -172,10 +172,10 @@ class SnecAnalysis(object):
         self.best_ni_mix = self.tbdata['ni_mixing'][best_model_row]
         self.best_mass = self.tbdata['mass'][best_model_row]
         self.best_energy = self.tbdata['energy'][best_model_row]
-        #self.best_Kvalue = self.tbdata['kvalue'][best_model_row]
-        #self.best_radius = self.tbdata['radius'][best_model_row]
-        self.best_Kvalue = 30.0
-        self.best_radius = 2400
+        self.best_Kvalue = self.tbdata['kvalue'][best_model_row]
+        self.best_radius = self.tbdata['radius'][best_model_row]
+        #self.best_Kvalue = 30.0
+        #self.best_radius = 2400
         self.best_time_offset = self.tbdata['time_offset'][best_model_row]
         self.best_model_dir = os.path.join(self.base_dir, 
                                          'Ni_mass_{:1.4f}'.format(self.best_ni_mass),
