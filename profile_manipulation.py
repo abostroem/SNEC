@@ -1,4 +1,5 @@
 import sys
+import shutil
 import os
 import math
 import shutil
@@ -46,15 +47,14 @@ def add_wind(parameters):
                 mainfolder = os.path.join('sukhbold_profiles_wind',
                     'M{:2.1f}'.format(imass), #TODO - figure out formating so if string is single digit, prepended with a 0
                     'K_0.0', #TODO - figure out formating so if string is single digit, prepended with a 0
-                    'R_0000',
-                    'profiles')
+                    'R_0')
 
                 os.makedirs(mainfolder, exist_ok=True)
                 base_profile_dir = generate_profile_directory_name(imass)
 
                 fname = base_profile_dir+'.short'
                 fname_iso = base_profile_dir+'.iso.dat'
-                shutil.copyfile(fname, os.path.join(mainfolder, os.path.basename(fname)))
+                shutil.copyfile(fname, os.path.join(mainfolder,os.path.basename(fname)))
                 shutil.copyfile(fname_iso, os.path.join(mainfolder, os.path.basename(fname_iso)))
             else:
                 idensity = idensity*10**17
@@ -107,7 +107,6 @@ def add_wind(parameters):
                     mdot_gl.append(mdot_msol_yr_max)
     
                     ### -------------------- Building profiles with the wind ----------------------
-    
                     radius_wind = [] #in solar radii
                     rho_wind = []
                     rho_log_wind = []
@@ -216,4 +215,3 @@ def add_wind(parameters):
                                         imass, rho_attach_gl[0], vel_esc_gl[0], mdot_gl[0], mass_in_wind_gl[0], tau_wind_gl[0]))
     
                     outfile_info.close()
-    
