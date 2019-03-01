@@ -1,18 +1,14 @@
 #!/usr/bin/env python
 
 import os
-from sys import argv
+import glob
+import sys
 from string import Template
 
-script,basename,EE,mixing,Ni_mass = argv
+def write_parfile(i_ni_mass, i_ni_mix, imass, ienergy, parameters, basepath):
 
-M_ZAMS = ["9.0","9.5","10.0","10.5","11.0","11.5","12.0","12.5","13.0","13.5","14.0","14.5","15.0","15.5","16.0","16.5","17.0","17.5","18.0","18.5","19.0","19.5","20.0","20.5","21.0","21.5","22.0","22.5","23.0","23.5","24.0","24.5","25.0","25.5","26.0","26.5","27.0","27.5","28.0","28.5","29.0","29.5","30.0"]
-
-M_ex = [1.4,1.4,1.423,1.483,1.404,1.551,1.478,1.568,1.614,1.615,1.652,1.688,1.886,1.916,1.504,1.518,1.530,1.911,1.905,1.810,1.646,1.773,1.804,1.536,1.480,1.569,1.817,2.061,2.121,2.134,2.093,2.019,1.930,1.930,1.930,1.930,1.930,1.930,1.930,1.930,1.930,1.930,1.930]
-
-#M_ex = [1.4,1.4,1.423,1.483,1.404,1.551,1.478,1.568,1.614,1.615,1.652,1.688,1.886,1.916,1.504,1.518,1.530,1.911,1.905,1.810,1.646,1.773,1.804,1.536,1.480,1.569,2.3,2.4,2.4,2.4,2.4,2.4,2.4]
-
-PARFILE = Template("""\
+    PARFILE = Template(
+    """\
 #____________LAUNCH_____________
 
 outdir              = "Data"
@@ -63,7 +59,7 @@ eoskey = $eos
 #1 - ideal eos
 #2 - Paczynski
 
-helm_table_name = "src/helmholtz_eos/helm_table.dat"
+#helm_table_name = "src/helmholtz_eos/helm_table.dat"
 
 Ni_switch = $Ni_switch_par
 Ni_mass = $Ni_total_mass 			#(in solar mass)
@@ -101,23 +97,34 @@ dtmax               = 3.0d2
 
 sedov 		    = 0
 """)
+    profile_flist = glob.glob(os.path.join(basepath, 'profiles', 's*'))
+    for ifile in profile_flist:
+        if ifile.endswith('short'): 
+            shortfile=os.path.basename(ifile)
+        elif ifile.endswith('dat'):
+            isofile=os.path.basename(ifile)
+        else:
+            print(profile_flist)
+            import pdb; pdb.set_trace()
 
-shortfile = [f for f in os.listdir(basename + "/profiles") if (f.startswith("s") and f.endswith(".short"))][0]
-isofile = [f for f in os.listdir(basename + "/profiles") if (f.startswith("s") and f.endswith(".iso.dat"))][0]
-M_ZAMS_string = shortfile[1:-6]
-open(basename + "/parameters", "w").write(
-    PARFILE.substitute(
-        profile_short      = "\""+"profiles/"+shortfile+"\"",
-        profile_iso_dat      = "\""+"profiles/"+isofile+"\"",
-        fin_energy      = str(EE)+'d51',
-        bomb_time       = '1.0d0',
-        bomb_mass_size      = '0.02d0',
-        resolution      = '1000',
-        excised_mass  = str(M_ex[M_ZAMS.index(M_ZAMS_string)]),
-        Ni_switch_par = '1',
-        Ni_total_mass = str(Ni_mass),
-        Ni_mixing  = str(mixing),
-        boxcar = '1',
-        eos = '2',
-        endtime = '1.728d7')
+    with open(os.path.join(basepath,"parameters"), "w") as ofile:
+        if imass not in parameters['excised_mass'].keys():
+            print('Please add an entry to the excised_mass dictionary defined in user_def.param for mass {}'.format(imass))
+            sys.exit()
+        ofile.write(
+            PARFILE.substitute(
+                profile_short      =  '"{}"'.format(os.path.join("profiles",shortfile)),
+                profile_iso_dat      = '"{}"'.format(os.path.join("profiles",isofile)),
+                fin_energy      = str(ienergy)+'d51',
+                bomb_time       = '{}d0'.format(parameters['bomb_time']),
+                bomb_mass_size      = '{}d0'.format(parameters['bomb_mass_size']),
+                resolution      = str(parameters['resolution']),
+                excised_mass = str(parameters['excised_mass'][imass]),
+                Ni_switch_par = str(parameters['Ni_switch_par']),
+                Ni_total_mass = '{}'.format(i_ni_mass),
+                Ni_mixing  = '{}'.format(i_ni_mix),
+                boxcar = str(parameters['boxcar']),
+                eos = str(parameters['eos']),
+                endtime = '{:1.3E}'.format(parameters['endtime']).replace('E+0', 'd')
+            )
         )

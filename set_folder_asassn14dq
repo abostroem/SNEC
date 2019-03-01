@@ -41,6 +41,6 @@ for i in ${energies[@]}; do mkdir -p $name/E_$i/Data; done
 
 for i in ${energies[@]}; do python parfile_organizer.py $name/E_$i $i $Mixing $M_Ni; done
 
-python cmd_organizer.py $SNname $Mixing $Mval "${energies_str}"
+python cmd_organizer.py $SNname $Mixing $Mval "${energies_str}" 
 
 #sbatch snec.cmd
