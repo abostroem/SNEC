@@ -7,8 +7,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-from visualization import zscale
-import define_filters
+from utilities_az.visualization import zscale
+from utilities_az import define_filters
 
 
 class SnecAnalysis(object):
@@ -224,6 +224,7 @@ class SnecAnalysis(object):
         ax.set_title('Light Curve and SNEC Models for {}'.format(self.name))
         ax.set_ylim(ax.get_ylim()[::-1])
         ax.legend(loc=3, ncol=2)
+        plt.tight_layout()
         plt.savefig(os.path.join(self.fig_dir, '{}_snec_run1.pdf'.format(self.name)))
         
     def read_chisq(self):
@@ -240,7 +241,7 @@ class SnecAnalysis(object):
             fixed_param_str = 'Ni Mass={}'.format(self.best_ni_mass)
         else:
             axis1='ni_mass'
-            axis1_label = 'Ni Mass (Msun)'
+            axis1_label = 'Ni Mass (M$_\odot$)'
             parameter1 = self.ni_mass
             fixed_param_str = ''
             global_indx = np.ones(len(self.tbdata), dtype=bool)
@@ -251,21 +252,21 @@ class SnecAnalysis(object):
             if axis1 is None:
                 axis1 = 'ni_mix'
                 parameter1 = self.ni
-                axis1_label = 'Ni Core Mixing (Rsun)'
+                axis1_label = 'Ni Core Mixing (Msun)'
             else:
                 axis2 = 'ni_mix'
-                axis2_label = 'Ni Core Mixing (Rsun)'
+                axis2_label = 'Ni Core Mixing (M$_\odot$)'
         if plot_mass is False:
             global_indx = global_indx & (self.tbdata['mass']==self.best_mass)
             fixed_param_str = '{}, Mass={}'.format(fixed_param_str, self.best_mass)
         else:
             if axis1 is None:
                 axis1 = 'mass'
-                axis1_label = 'Progenitor Mass (Msun)'
+                axis1_label = 'Progenitor Mass (M$_\odot$)'
                 parameter1 = self.masses
             elif axis2 is None:
                 axis2 = 'mass'
-                axis2_label = 'Progenitor Mass (Msun)'
+                axis2_label = 'Progenitor Mass (M$_\odot$)'
                 parameter2 = self.masses
             else:
                 sys.exit('More than 2 axes specified')
@@ -275,12 +276,12 @@ class SnecAnalysis(object):
         else:
             if axis1 is None:
                 axis1 = 'energy'
-                axis1_label = 'Explosion Energy'
+                axis1_label = 'Explosion Energy ($x10^{51}$ ergs)'
                 parameter1 = self.energies
             elif axis2 is None:
                 axis2 = 'energy'
                 parameter2 =self.energies
-                axis2_label = 'Explosion Energy'
+                axis2_label = 'Explosion Energy ($x10^{51}$ ergs)'
             else:
                 sys.exit('More than 2 axes specified')
         if plot_Kvalue is False:
@@ -303,11 +304,11 @@ class SnecAnalysis(object):
         else:
             if axis1 is None:
                 axis1 = 'radius'
-                axis1_label = 'CSM Radial Extent (Rsun)'
+                axis1_label = 'CSM Radial Extent (R$_\odot$)'
                 parameter1 = self.radii
             elif axis2 is None:
                 axis2 = 'radius'
-                axis2_label = 'CSM Radial Extent (Rsun)'
+                axis2_label = 'CSM Radial Extent (R$_\odot$)'
                 parameter2 = self.radii
             else:
                 sys.exit('More than 2 axes specified')
@@ -338,7 +339,7 @@ class SnecAnalysis(object):
         im = ax.imshow(chisq, interpolation='nearest', aspect='auto', cmap=plt.get_cmap('viridis'))
         ax.set_xlabel(axis2_label)
         ax.set_ylabel(axis1_label)
-        ax.set_title('Best Chisquare for {} and {}'.format(axis1, axis2))
+        ax.set_title('Best Chi Square for {} and {}'.format(axis1, axis2))
         fig.suptitle(fixed_param_str)
         fig.colorbar(mappable=im)
         ax.set_xticklabels([0]+['{}'.format(i) for i in parameter2])
