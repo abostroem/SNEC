@@ -6,8 +6,8 @@
 #--------------------------
 mass: [11, 13, 15, 16, 17, 18, 21] #previously referred to as M
 explosion_energy: [0.5, 0.8, 1.1, 1.4, 1.7, 2.0] #previously referred to as E, in units of 10^51 ergs
-density_1D: [10, 20, 30, 35, 40, 50, 60] #previously referred to at K in units of 10^17
-wind_extent: [1500, 1800, 2100, 2400, 2700, 3000, 3300] #previously referred to at R, in units of solar radii
+density_1D: [0] #previously referred to at K in units of 10^17
+wind_extent: [0] #previously referred to at R, in units of solar radii
 ni_mass: [0.083, 0.0965, 0.11] #nickel mass in units of solar mass?; ni_mass
 ni_mix: [5.0] #outer mass radius of the nickel distribution; ni_boundary_mass
 #List of parameters that are in the format [start, stop, step] and should be expanded by
@@ -25,7 +25,7 @@ resolution : 1000  #TODO figure out what this is
 Ni_switch_par : 1 #TODO figure out what this is
 boxcar : 1 #TODO check def - use boxcar smoothing of the profile
 eos : 2  #pick and equation of state; 2 corresponds to Paczynski
-endtime : !!float 2.592e7 #Define an end time for the simulation (in seconds after explosion)
+endtime : !!float 1.296e7 #150 days; Define an end time for the simulation (in seconds after explosion)
 
 excised_mass: 
     9.0:  1.4,
