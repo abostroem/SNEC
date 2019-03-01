@@ -1,6 +1,7 @@
 import sys
 import os
 import math
+import shutil
 
 import astropy.constants as c
 import astropy.units as u
@@ -53,8 +54,8 @@ def add_wind(parameters):
 
                 fname = base_profile_dir+'.short'
                 fname_iso = base_profile_dir+'.iso.dat'
-                shutil.copyfile(fname, mainfolder)
-                shutil.copyfile(fname_iso, mainfolder)
+                shutil.copyfile(fname, os.path.join(mainfolder, os.path.basename(fname)))
+                shutil.copyfile(fname_iso, os.path.join(mainfolder, os.path.basename(fname_iso)))
             else:
                 idensity = idensity*10**17
                 for iradius in parameters['wind_extent']:
