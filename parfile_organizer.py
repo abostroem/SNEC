@@ -98,14 +98,16 @@ dtmax               = 3.0d2
 sedov 		    = 0
 """)
     profile_flist = glob.glob(os.path.join(basepath, 'profiles', 's*'))
+    shortfile = None
+    isofile = None
     for ifile in profile_flist:
         if ifile.endswith('short'): 
             shortfile=os.path.basename(ifile)
-        elif ifile.endswith('dat'):
+        if ifile.endswith('dat'):
             isofile=os.path.basename(ifile)
-        else:
-            print(profile_flist)
-            import pdb; pdb.set_trace()
+    if (isofile is None) or (shortfile is None):
+        print(profile_flist)
+        import pdb; pdb.set_trace()
 
     with open(os.path.join(basepath,"parameters"), "w") as ofile:
         if imass not in parameters['excised_mass'].keys():

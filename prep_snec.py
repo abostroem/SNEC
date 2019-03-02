@@ -62,6 +62,7 @@ def copy_files(basepath, imass, idensity, iradius):
                     'R_{}'.format(int(iradius)))
     profile_list = glob.glob(os.path.join(profile_basename, 's*')) #get the .iso and .dat files
     for ifile in profile_list:
+        print('Copying {} to {}'.format(ifile, os.path.join(basepath, 'profiles', os.path.basename(ifile))))
         shutil.copyfile(ifile, os.path.join(basepath, 'profiles', os.path.basename(ifile)))
     shutil.copytree('tables', os.path.join(basepath, 'tables'))
     shutil.copyfile('snec', os.path.join(basepath, 'snec'))
