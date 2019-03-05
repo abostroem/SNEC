@@ -96,7 +96,7 @@ def write_sbatch_job(timeout, array_num):
 export SEEDFILE=input_dir_list.txt
 export SEED=$(cat $SEEDFILE | head -n $SLURM_ARRAY_TASK_ID | tail -n 1)
 mkdir -p /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
-cp -r $SEED /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
+cp -r $SEED/* /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
 cd /scratch/bostroem/job_$SLURM_ARRAY_TASK_ID
 srun ./snec &>snec.out   
 #make sure you captured all your data
